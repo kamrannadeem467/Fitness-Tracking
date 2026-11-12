@@ -66,7 +66,6 @@ const Header = () => {
               user?.role === 'admin' ? (
                 <>
                   <NavLink className={linkClassName} to="/admin/dashboard">Dashboard</NavLink>
-                  <NavLink className={linkClassName} to="/admin/users">Manage users</NavLink>
                   <NavLink className={linkClassName} to="/admin/profile">Profile</NavLink>
                 </>
               ) : (
@@ -84,9 +83,9 @@ const Header = () => {
                 <span className="site-user-greeting">
                   Hi, {user?.name?.split(' ')[0] || 'there'}
                 </span>
-                <button className="site-header-button site-header-button-quiet" onClick={handleLogout} type="button">
+                {/* <button className="site-header-button site-header-button-quiet" onClick={handleLogout} type="button">
                   Log out
-                </button>
+                </button> */}
               </>
             ) : (
               <>

@@ -6,7 +6,7 @@ const AdminRoute = () => {
   const { user, token } = useContext(AuthContext);
 
   if (!token) {
-    return <Navigate to="/admin/login" replace />;
+    return <Navigate to="/user/login" replace />;
   }
 
   // Strictly check Admin role

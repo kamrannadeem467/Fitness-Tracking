@@ -15,6 +15,7 @@ const workoutRoutes = require("./routes/workoutRoutes");
 const nutritionRoutes = require("./routes/nutritionRoutes");
 const progressRoutes = require("./routes/progressRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
+const contactRoutes = require('./routes/contactRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -30,14 +31,15 @@ app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
 // API Base Routes
 app.use("/api/auth", authRoutes);
 app.use("/api", pageRoutes); // Home, About
-app.use("/api/user", userRoutes); // User Profile
-app.use("/api/admin", adminRoutes); // Dashboard, Users
 
+app.use("/api/user", userRoutes); // User Profile
 app.use('/api/workouts', workoutRoutes);
 app.use('/api/nutrition', nutritionRoutes);
 app.use('/api/progress', progressRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 
+app.use("/api/admin", adminRoutes); // Dashboard, Users
+app.use('/api/contact', contactRoutes);
 // ------------------------------------
 // ERROR HANDLING MIDDLEWARES (Must be at the end)
 // ------------------------------------

@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
 import { ArrowDownRight, Plus, Ruler, Scale } from 'lucide-react';
+import EntryModal from '../../components/userLayout/EntryModal';
 
 const ProgressTracker = () => {
   const [progressLogs, setProgressLogs] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [weight, setWeight] = useState('');
   const [bodyFatPercentage, setBodyFatPercentage] = useState('');
   const [chest, setChest] = useState('');
@@ -14,6 +16,7 @@ const ProgressTracker = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const closeModal = useCallback(() => setIsModalOpen(false), []);
 
   const fetchProgress = async () => {
     try {
@@ -62,6 +65,7 @@ const ProgressTracker = () => {
       setArms('');
       setNotes('');
       await fetchProgress();
+      closeModal();
     } catch (err) {
       setError(err.response?.data?.message || 'Could not save your progress. Please try again.');
     } finally {
@@ -79,7 +83,52 @@ const ProgressTracker = () => {
           <h1>Progress tracker</h1>
           <p>Keep personal milestones in one place and look back at how far you have come.</p>
         </div>
+        <button className="portal-button" type="button" onClick={() => setIsModalOpen(true)}>
+          <Plus size={16} aria-hidden="true" /> Add check-in
+        </button>
       </div>
+
+      {message && <div className="portal-alert portal-alert-success" role="status">{message}</div>}
+      {error && !isModalOpen && <div className="portal-alert portal-alert-error" role="alert">{error}</div>}
+      {isModalOpen && (
+        <EntryModal
+          title="Record a check-in"
+          description="Measurements are optional. Add what feels useful to track."
+          onClose={closeModal}
+        >
+          <form className="portal-form" onSubmit={handleSubmit}>
+            <div className="portal-form-grid">
+              <div className="portal-field">
+                <label htmlFor="progress-weight">Weight (kg / lbs)</label>
+                <input id="progress-weight" type="number" min="0" step="0.1" value={weight} onChange={(event) => setWeight(event.target.value)} placeholder="e.g. 72.5" required />
+              </div>
+              <div className="portal-field">
+                <label htmlFor="progress-fat">Body fat (%)</label>
+                <input id="progress-fat" type="number" min="0" max="100" step="0.1" value={bodyFatPercentage} onChange={(event) => setBodyFatPercentage(event.target.value)} placeholder="Optional" />
+              </div>
+            </div>
+            <div className="portal-field">
+              <label>Body measurements <span className="portal-field-hint">(optional, inches)</span></label>
+              <div className="portal-form-grid-three">
+                <input aria-label="Chest measurement in inches" type="number" min="0" step="0.1" value={chest} onChange={(event) => setChest(event.target.value)} placeholder="Chest" />
+                <input aria-label="Waist measurement in inches" type="number" min="0" step="0.1" value={waist} onChange={(event) => setWaist(event.target.value)} placeholder="Waist" />
+                <input aria-label="Arms measurement in inches" type="number" min="0" step="0.1" value={arms} onChange={(event) => setArms(event.target.value)} placeholder="Arms" />
+              </div>
+            </div>
+            <div className="portal-field">
+              <label htmlFor="progress-notes">Notes</label>
+              <textarea id="progress-notes" value={notes} onChange={(event) => setNotes(event.target.value)} placeholder="How are you feeling? Add a note for your future self." rows="3" />
+            </div>
+            {error && <div className="portal-alert portal-alert-error" role="alert">{error}</div>}
+            <div className="portal-form-actions">
+              <button className="portal-button" type="submit" disabled={saving}>
+                <Plus size={16} aria-hidden="true" /> {saving ? 'Saving check-in…' : 'Save check-in'}
+              </button>
+              <button className="portal-button portal-button-secondary" type="button" onClick={closeModal}>Cancel</button>
+            </div>
+          </form>
+        </EntryModal>
+      )}
 
       <div className="portal-summary-grid">
         <div className="portal-summary-card">
@@ -98,47 +147,6 @@ const ProgressTracker = () => {
           <small>Progress check-ins</small>
         </div>
       </div>
-
-      <section className="portal-card">
-        <div className="portal-card-heading">
-          <div>
-            <h2>Record a check-in</h2>
-            <p>Measurements are optional. Add what feels useful to track.</p>
-          </div>
-          <Plus size={19} color="#1b7a56" aria-hidden="true" />
-        </div>
-        {message && <div className="portal-alert portal-alert-success" role="status">{message}</div>}
-        {error && <div className="portal-alert portal-alert-error" role="alert">{error}</div>}
-        <form className="portal-form" onSubmit={handleSubmit}>
-          <div className="portal-form-grid">
-            <div className="portal-field">
-              <label htmlFor="progress-weight">Weight (kg / lbs)</label>
-              <input id="progress-weight" type="number" min="0" step="0.1" value={weight} onChange={(event) => setWeight(event.target.value)} placeholder="e.g. 72.5" required />
-            </div>
-            <div className="portal-field">
-              <label htmlFor="progress-fat">Body fat (%)</label>
-              <input id="progress-fat" type="number" min="0" max="100" step="0.1" value={bodyFatPercentage} onChange={(event) => setBodyFatPercentage(event.target.value)} placeholder="Optional" />
-            </div>
-          </div>
-          <div className="portal-field">
-            <label>Body measurements <span className="portal-field-hint">(optional, inches)</span></label>
-            <div className="portal-form-grid-three">
-              <input aria-label="Chest measurement in inches" type="number" min="0" step="0.1" value={chest} onChange={(event) => setChest(event.target.value)} placeholder="Chest" />
-              <input aria-label="Waist measurement in inches" type="number" min="0" step="0.1" value={waist} onChange={(event) => setWaist(event.target.value)} placeholder="Waist" />
-              <input aria-label="Arms measurement in inches" type="number" min="0" step="0.1" value={arms} onChange={(event) => setArms(event.target.value)} placeholder="Arms" />
-            </div>
-          </div>
-          <div className="portal-field">
-            <label htmlFor="progress-notes">Notes</label>
-            <textarea id="progress-notes" value={notes} onChange={(event) => setNotes(event.target.value)} placeholder="How are you feeling? Add a note for your future self." rows="3" />
-          </div>
-          <div className="portal-form-actions">
-            <button className="portal-button" type="submit" disabled={saving}>
-              <Plus size={16} aria-hidden="true" /> {saving ? 'Saving check-in…' : 'Save check-in'}
-            </button>
-          </div>
-        </form>
-      </section>
 
       <section className="portal-card">
         <div className="portal-card-heading">

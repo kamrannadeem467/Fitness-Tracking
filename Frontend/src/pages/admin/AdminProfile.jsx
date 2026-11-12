@@ -1,38 +1,54 @@
-import { useContext } from "react";
-import { Link } from "react-router-dom";
-import { AuthContext } from "../../context/AuthContext";
+import { useContext } from 'react';
+import { Link } from 'react-router-dom';
+import { Mail, Pencil, ShieldCheck } from 'lucide-react';
+import { AuthContext } from '../../context/AuthContext';
 
 const AdminProfile = () => {
   const { user } = useContext(AuthContext);
-
-  const avatarUrl = user?.avatar
-    ? `http://localhost:5000${user.avatar}`
-    : "https://via.placeholder.com/100";
+  const initials = user?.name?.trim()?.charAt(0) || 'A';
 
   return (
-    <div style={{ padding: "20px", maxWidth: "500px", background: "#f8f9fa" }}>
-      <h2>Admin Profile ({user?.role?.toUpperCase()})</h2>
-
-      <div style={{ display: "flex", alignItems: "center", gap: "20px", margin: "20px 0" }}>
-        <img
-          src={avatarUrl}
-          alt="Admin Avatar"
-          style={{ width: "100px", height: "100px", borderRadius: "50%", objectFit: "cover" }}
-        />
+    <div className="admin-page">
+      <header className="admin-page-heading">
         <div>
-          <h3>{user?.name}</h3>
-          <p><strong>Email:</strong> {user?.email}</p>
+          <span className="admin-eyebrow">ACCOUNT</span>
+          <h1>Admin profile</h1>
+          <p>Manage your administrator details and account information.</p>
         </div>
-      </div>
+        <Link className="admin-button" to="/admin/profile/edit">
+          <Pencil size={15} aria-hidden="true" /> Edit profile
+        </Link>
+      </header>
 
-      <div style={{ margin: "20px 0" }}>
-        <h4>Bio</h4>
-        <p>{user?.bio || "No admin bio added yet."}</p>
-      </div>
-
-      <Link to="/admin/profile/edit">
-        <button style={{ padding: "8px 16px", cursor: "pointer" }}>Edit Admin Profile</button>
-      </Link>
+      <section className="admin-card admin-profile-card">
+        <div className="admin-profile-summary">
+          <span className="admin-avatar" aria-hidden="true">
+            {user?.avatar ? <img src={`http://localhost:5000${user.avatar}`} alt="" /> : initials}
+          </span>
+          <h2>{user?.name || 'Administrator'}</h2>
+          <span className="admin-badge is-green"><ShieldCheck size={12} aria-hidden="true" /> {user?.role || 'Admin'}</span>
+        </div>
+        <div className="admin-profile-details">
+          <div className="admin-card-heading">
+            <div>
+              <h2>Personal information</h2>
+              <p>Your profile details are only used to identify your administrator account.</p>
+            </div>
+          </div>
+          <div className="admin-profile-detail">
+            <small>Name</small>
+            <strong>{user?.name || 'Not provided'}</strong>
+          </div>
+          <div className="admin-profile-detail">
+            <small>Email address</small>
+            <strong><Mail size={14} aria-hidden="true" /> {user?.email || 'Not provided'}</strong>
+          </div>
+          <div className="admin-profile-detail">
+            <small>Bio</small>
+            <strong>{user?.bio || 'No bio added yet.'}</strong>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };

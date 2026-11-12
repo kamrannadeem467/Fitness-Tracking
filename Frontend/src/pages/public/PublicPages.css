@@ -350,6 +350,102 @@
   background: #fff;
 }
 
+.public-contact-form-section {
+  padding: 76px 0 84px;
+  background: #f7f9f5;
+}
+
+.public-contact-form {
+  display: grid;
+  max-width: 720px;
+  gap: 20px;
+  margin: 0 auto;
+  padding: clamp(22px, 4vw, 36px);
+  border: 1px solid #e6ece7;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 14px 40px rgba(28, 54, 38, 0.06);
+}
+
+.public-contact-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.public-contact-field {
+  display: grid;
+  min-width: 0;
+  gap: 8px;
+}
+
+.public-contact-field label {
+  color: #35463c;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.public-contact-field input,
+.public-contact-field textarea {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 14px;
+  border: 1px solid #dfe7df;
+  border-radius: 8px;
+  outline: none;
+  background: #fff;
+  color: #25372d;
+  font: inherit;
+  font-size: 13px;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.public-contact-field textarea {
+  min-height: 140px;
+  resize: vertical;
+}
+
+.public-contact-field input::placeholder,
+.public-contact-field textarea::placeholder {
+  color: #a2ada5;
+}
+
+.public-contact-field input:focus,
+.public-contact-field textarea:focus {
+  border-color: #83b77b;
+  box-shadow: 0 0 0 3px rgba(131, 183, 123, 0.15);
+}
+
+.public-contact-feedback {
+  padding: 12px 14px;
+  border: 1px solid;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.public-contact-feedback.is-success {
+  border-color: #c8e4ce;
+  background: #f1f8f1;
+  color: #286342;
+}
+
+.public-contact-feedback.is-error {
+  border-color: #f0c9c5;
+  background: #fff5f3;
+  color: #a34239;
+}
+
+.public-contact-submit {
+  justify-self: start;
+  cursor: pointer;
+}
+
+.public-contact-submit:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
 .public-help-grid .public-principle-card {
   display: flex;
   min-height: 250px;
@@ -492,6 +588,7 @@
   .public-story,
   .public-principles,
   .public-contact-help,
+  .public-contact-form-section,
   .public-faq {
     padding-top: 58px;
     padding-bottom: 62px;
@@ -513,6 +610,14 @@
   }
 
   .public-bottom-cta-inner .public-button {
+    width: 100%;
+  }
+
+  .public-contact-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .public-contact-submit {
     width: 100%;
   }
 }

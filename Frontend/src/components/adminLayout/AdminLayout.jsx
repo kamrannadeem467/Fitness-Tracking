@@ -1,15 +1,33 @@
-import { Outlet } from "react-router-dom";
-import AdminHeader from "./AdminHeader";
-import AdminSidebar from "./AdminSidebar";
+import { useState } from 'react';
+import { Outlet } from 'react-router-dom';
+import AdminHeader from './AdminHeader';
+import AdminSidebar from './AdminSidebar';
+import './AdminLayout.css';
 
 const AdminLayout = () => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   return (
-    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
-      <AdminHeader />
-      <div style={{ display: "flex", flex: 1 }}>
-        <AdminSidebar />
-        <main style={{ flex: 1, padding: "25px", background: "#f8fafc" }}>
-          <Outlet /> {/* Yahan Admin pages render hongy */}
+    <div className="admin-shell">
+      {isSidebarOpen && (
+        <button
+          className="admin-sidebar-backdrop"
+          type="button"
+          aria-label="Close navigation menu"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+      <AdminSidebar
+        isOpen={isSidebarOpen}
+        onNavigate={() => setIsSidebarOpen(false)}
+      />
+      <div className="admin-main">
+        <AdminHeader
+          isSidebarOpen={isSidebarOpen}
+          onMenuToggle={() => setIsSidebarOpen((isOpen) => !isOpen)}
+        />
+        <main className="admin-content">
+          <Outlet />
         </main>
       </div>
     </div>

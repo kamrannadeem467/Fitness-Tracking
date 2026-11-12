@@ -1,7 +1,9 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useContext, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Check, Eye, EyeOff, MailCheck } from 'lucide-react';
+import { GoogleLogin } from '@react-oauth/google';
 import API from '../../api/axiosInstance';
+import { AuthContext } from '../../context/AuthContext';
 import PortalAuthLayout from '../../components/userLayout/PortalAuthLayout';
 
 const UserRegister = () => {
@@ -12,6 +14,8 @@ const UserRegister = () => {
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handleChange = (event) => {
     setFormData((current) => ({ ...current, [event.target.name]: event.target.value }));
@@ -43,6 +47,20 @@ const UserRegister = () => {
       setStep(3);
     } catch (err) {
       setError(err.response?.data?.message || 'Invalid or expired verification code.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setError('');
+    setLoading(true);
+    try {
+      const { data } = await API.post('/auth/google-login', { token: credentialResponse.credential });
+      login(data.user, data.token);
+      navigate(data.user.role === 'admin' ? '/admin/dashboard' : '/user/dashboard');
+    } catch (requestError) {
+      setError(requestError.response?.data?.message || 'Google sign-up failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -121,6 +139,19 @@ const UserRegister = () => {
           <p>Your account is ready. Sign in to start using your personal wellness tools.</p>
           <Link className="portal-button portal-auth-submit" to="/user/login">Go to sign in</Link>
         </div>
+      )}
+
+      {step === 1 && (
+        <>
+          <div className="portal-auth-divider">or sign up with</div>
+          <div className="portal-auth-google">
+            <GoogleLogin
+              text="signup_with"
+              onSuccess={handleGoogleSuccess}
+              onError={() => setError('Google sign-up failed. Please try again.')}
+            />
+          </div>
+        </>
       )}
 
       {step !== 3 && (

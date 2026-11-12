@@ -1,9 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
 import { Apple, Flame, Plus, Salad } from 'lucide-react';
+import EntryModal from '../../components/userLayout/EntryModal';
+import NutritionAnalytics from '../../components/userLayout/home/userdashboard/NutritionAnalytics';
 
 const NutritionTracker = () => {
   const [nutritionLogs, setNutritionLogs] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [mealType, setMealType] = useState('breakfast');
   const [foodName, setFoodName] = useState('');
   const [quantity, setQuantity] = useState('');
@@ -15,6 +18,7 @@ const NutritionTracker = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const closeModal = useCallback(() => setIsModalOpen(false), []);
 
   const fetchNutrition = async () => {
     try {
@@ -64,6 +68,7 @@ const NutritionTracker = () => {
       setCarbs('');
       setFats('');
       await fetchNutrition();
+      closeModal();
     } catch (err) {
       setError(err.response?.data?.message || 'Could not save your meal. Please try again.');
     } finally {
@@ -88,7 +93,67 @@ const NutritionTracker = () => {
           <h1>Nutrition tracker</h1>
           <p>Keep a mindful record of your meals and the nutrients that fuel your day.</p>
         </div>
+        <button className="portal-button" type="button" onClick={() => setIsModalOpen(true)}>
+          <Plus size={16} aria-hidden="true" /> Add meal
+        </button>
       </div>
+
+      {message && <div className="portal-alert portal-alert-success" role="status">{message}</div>}
+      {error && !isModalOpen && <div className="portal-alert portal-alert-error" role="alert">{error}</div>}
+      {isModalOpen && (
+        <EntryModal
+          title="Log a meal"
+          description="Add a food item and its nutrition details."
+          onClose={closeModal}
+        >
+          <form className="portal-form" onSubmit={handleSubmit}>
+            <div className="portal-form-grid">
+              <div className="portal-field">
+                <label htmlFor="meal-type">Meal</label>
+                <select id="meal-type" value={mealType} onChange={(event) => setMealType(event.target.value)}>
+                  <option value="breakfast">Breakfast</option>
+                  <option value="lunch">Lunch</option>
+                  <option value="dinner">Dinner</option>
+                  <option value="snacks">Snacks</option>
+                </select>
+              </div>
+              <div className="portal-field">
+                <label htmlFor="food-quantity">Quantity</label>
+                <input id="food-quantity" value={quantity} onChange={(event) => setQuantity(event.target.value)} placeholder="e.g. 1 bowl" required />
+              </div>
+            </div>
+            <div className="portal-field">
+              <label htmlFor="food-name">Food name</label>
+              <input id="food-name" value={foodName} onChange={(event) => setFoodName(event.target.value)} placeholder="e.g. Oats with milk" required />
+            </div>
+            <div className="portal-form-grid portal-form-grid-three">
+              <div className="portal-field">
+                <label htmlFor="food-calories">Calories (kcal)</label>
+                <input id="food-calories" type="number" min="0" value={calories} onChange={(event) => setCalories(event.target.value)} placeholder="0" required />
+              </div>
+              <div className="portal-field">
+                <label htmlFor="food-protein">Protein (g)</label>
+                <input id="food-protein" type="number" min="0" step="0.1" value={protein} onChange={(event) => setProtein(event.target.value)} placeholder="Optional" />
+              </div>
+              <div className="portal-field">
+                <label htmlFor="food-carbs">Carbs (g)</label>
+                <input id="food-carbs" type="number" min="0" step="0.1" value={carbs} onChange={(event) => setCarbs(event.target.value)} placeholder="Optional" />
+              </div>
+              <div className="portal-field">
+                <label htmlFor="food-fats">Fats (g)</label>
+                <input id="food-fats" type="number" min="0" step="0.1" value={fats} onChange={(event) => setFats(event.target.value)} placeholder="Optional" />
+              </div>
+            </div>
+            {error && <div className="portal-alert portal-alert-error" role="alert">{error}</div>}
+            <div className="portal-form-actions">
+              <button className="portal-button" type="submit" disabled={saving}>
+                <Plus size={16} aria-hidden="true" /> {saving ? 'Saving meal…' : 'Save meal'}
+              </button>
+              <button className="portal-button portal-button-secondary" type="button" onClick={closeModal}>Cancel</button>
+            </div>
+          </form>
+        </EntryModal>
+      )}
 
       <div className="portal-summary-grid">
         <div className="portal-summary-card">
@@ -107,62 +172,6 @@ const NutritionTracker = () => {
           <small>Protein logged</small>
         </div>
       </div>
-
-      <section className="portal-card">
-        <div className="portal-card-heading">
-          <div>
-            <h2>Log a meal</h2>
-            <p>Add a food item and its nutrition details.</p>
-          </div>
-          <Plus size={19} color="#1b7a56" aria-hidden="true" />
-        </div>
-        {message && <div className="portal-alert portal-alert-success" role="status">{message}</div>}
-        {error && <div className="portal-alert portal-alert-error" role="alert">{error}</div>}
-        <form className="portal-form" onSubmit={handleSubmit}>
-          <div className="portal-form-grid">
-            <div className="portal-field">
-              <label htmlFor="meal-type">Meal</label>
-              <select id="meal-type" value={mealType} onChange={(event) => setMealType(event.target.value)}>
-                <option value="breakfast">Breakfast</option>
-                <option value="lunch">Lunch</option>
-                <option value="dinner">Dinner</option>
-                <option value="snacks">Snacks</option>
-              </select>
-            </div>
-            <div className="portal-field">
-              <label htmlFor="food-quantity">Quantity</label>
-              <input id="food-quantity" value={quantity} onChange={(event) => setQuantity(event.target.value)} placeholder="e.g. 1 bowl" required />
-            </div>
-          </div>
-          <div className="portal-field">
-            <label htmlFor="food-name">Food name</label>
-            <input id="food-name" value={foodName} onChange={(event) => setFoodName(event.target.value)} placeholder="e.g. Oats with milk" required />
-          </div>
-          <div className="portal-form-grid-three">
-            <div className="portal-field">
-              <label htmlFor="food-calories">Calories (kcal)</label>
-              <input id="food-calories" type="number" min="0" value={calories} onChange={(event) => setCalories(event.target.value)} placeholder="0" required />
-            </div>
-            <div className="portal-field">
-              <label htmlFor="food-protein">Protein (g)</label>
-              <input id="food-protein" type="number" min="0" step="0.1" value={protein} onChange={(event) => setProtein(event.target.value)} placeholder="Optional" />
-            </div>
-            <div className="portal-field">
-              <label htmlFor="food-carbs">Carbs (g)</label>
-              <input id="food-carbs" type="number" min="0" step="0.1" value={carbs} onChange={(event) => setCarbs(event.target.value)} placeholder="Optional" />
-            </div>
-            <div className="portal-field">
-              <label htmlFor="food-fats">Fats (g)</label>
-              <input id="food-fats" type="number" min="0" step="0.1" value={fats} onChange={(event) => setFats(event.target.value)} placeholder="Optional" />
-            </div>
-          </div>
-          <div className="portal-form-actions">
-            <button className="portal-button" type="submit" disabled={saving}>
-              <Plus size={16} aria-hidden="true" /> {saving ? 'Saving meal…' : 'Save meal'}
-            </button>
-          </div>
-        </form>
-      </section>
 
       <section className="portal-card">
         <div className="portal-card-heading">
@@ -203,6 +212,7 @@ const NutritionTracker = () => {
           <div className="portal-empty">No meals logged yet. Add your first meal above to start your food journal.</div>
         )}
       </section>
+      <NutritionAnalytics nutritionLogs={nutritionLogs} />
     </div>
   );
 };

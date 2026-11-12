@@ -1,9 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
 import { Activity, Dumbbell, Plus, Timer } from 'lucide-react';
+import EntryModal from '../../components/userLayout/EntryModal';
+import WorkoutAnalytics from '../../components/userLayout/home/userdashboard/WorkoutAnalytics';
 
 const WorkoutTracker = () => {
   const [workouts, setWorkouts] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('strength');
   const [exerciseName, setExerciseName] = useState('');
@@ -14,6 +17,7 @@ const WorkoutTracker = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const closeModal = useCallback(() => setIsModalOpen(false), []);
 
   const fetchWorkouts = async () => {
     try {
@@ -61,6 +65,7 @@ const WorkoutTracker = () => {
       setReps('');
       setWeight('');
       await fetchWorkouts();
+      closeModal();
     } catch (err) {
       setError(err.response?.data?.message || 'Could not save your workout. Please try again.');
     } finally {
@@ -78,7 +83,63 @@ const WorkoutTracker = () => {
           <h1>Workout tracker</h1>
           <p>Keep a record of your sessions and celebrate every time you show up.</p>
         </div>
+        <button className="portal-button" type="button" onClick={() => setIsModalOpen(true)}>
+          <Plus size={16} aria-hidden="true" /> Add workout
+        </button>
       </div>
+
+      {message && <div className="portal-alert portal-alert-success" role="status">{message}</div>}
+      {error && !isModalOpen && <div className="portal-alert portal-alert-error" role="alert">{error}</div>}
+      {isModalOpen && (
+        <EntryModal
+          title="Log a workout"
+          description="Add a session and its first exercise to your history."
+          onClose={closeModal}
+        >
+          <form className="portal-form" onSubmit={handleSubmit}>
+            <div className="portal-form-grid">
+              <div className="portal-field">
+                <label htmlFor="workout-title">Workout name</label>
+                <input id="workout-title" value={title} onChange={(event) => setTitle(event.target.value)} placeholder="e.g. Full body session" required />
+              </div>
+              <div className="portal-field">
+                <label htmlFor="workout-category">Category</label>
+                <select id="workout-category" value={category} onChange={(event) => setCategory(event.target.value)}>
+                  <option value="strength">Strength</option>
+                  <option value="cardio">Cardio</option>
+                  <option value="flexibility">Flexibility</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+            </div>
+            <div className="portal-field">
+              <label htmlFor="exercise-name">Exercise</label>
+              <input id="exercise-name" value={exerciseName} onChange={(event) => setExerciseName(event.target.value)} placeholder="e.g. Goblet squats" required />
+            </div>
+            <div className="portal-form-grid-three">
+              <div className="portal-field">
+                <label htmlFor="workout-sets">Sets</label>
+                <input id="workout-sets" type="number" min="1" value={sets} onChange={(event) => setSets(event.target.value)} placeholder="3" required />
+              </div>
+              <div className="portal-field">
+                <label htmlFor="workout-reps">Reps</label>
+                <input id="workout-reps" type="number" min="1" value={reps} onChange={(event) => setReps(event.target.value)} placeholder="10" required />
+              </div>
+              <div className="portal-field">
+                <label htmlFor="workout-weight">Weight (kg)</label>
+                <input id="workout-weight" type="number" min="0" step="0.1" value={weight} onChange={(event) => setWeight(event.target.value)} placeholder="Optional" />
+              </div>
+            </div>
+            {error && <div className="portal-alert portal-alert-error" role="alert">{error}</div>}
+            <div className="portal-form-actions">
+              <button className="portal-button" type="submit" disabled={saving}>
+                <Plus size={16} aria-hidden="true" /> {saving ? 'Saving workout…' : 'Save workout'}
+              </button>
+              <button className="portal-button portal-button-secondary" type="button" onClick={closeModal}>Cancel</button>
+            </div>
+          </form>
+        </EntryModal>
+      )}
 
       <div className="portal-summary-grid">
         <div className="portal-summary-card">
@@ -97,58 +158,6 @@ const WorkoutTracker = () => {
           <small>Your routine, your pace</small>
         </div>
       </div>
-
-      <section className="portal-card">
-        <div className="portal-card-heading">
-          <div>
-            <h2>Log a workout</h2>
-            <p>Add a session and its first exercise to your history.</p>
-          </div>
-          <Plus size={19} color="#1b7a56" aria-hidden="true" />
-        </div>
-        {message && <div className="portal-alert portal-alert-success" role="status">{message}</div>}
-        {error && <div className="portal-alert portal-alert-error" role="alert">{error}</div>}
-        <form className="portal-form" onSubmit={handleSubmit}>
-          <div className="portal-form-grid">
-            <div className="portal-field">
-              <label htmlFor="workout-title">Workout name</label>
-              <input id="workout-title" value={title} onChange={(event) => setTitle(event.target.value)} placeholder="e.g. Full body session" required />
-            </div>
-            <div className="portal-field">
-              <label htmlFor="workout-category">Category</label>
-              <select id="workout-category" value={category} onChange={(event) => setCategory(event.target.value)}>
-                <option value="strength">Strength</option>
-                <option value="cardio">Cardio</option>
-                <option value="flexibility">Flexibility</option>
-                <option value="other">Other</option>
-              </select>
-            </div>
-          </div>
-          <div className="portal-field">
-            <label htmlFor="exercise-name">Exercise</label>
-            <input id="exercise-name" value={exerciseName} onChange={(event) => setExerciseName(event.target.value)} placeholder="e.g. Goblet squats" required />
-          </div>
-          <div className="portal-form-grid-three">
-            <div className="portal-field">
-              <label htmlFor="workout-sets">Sets</label>
-              <input id="workout-sets" type="number" min="1" value={sets} onChange={(event) => setSets(event.target.value)} placeholder="3" required />
-            </div>
-            <div className="portal-field">
-              <label htmlFor="workout-reps">Reps</label>
-              <input id="workout-reps" type="number" min="1" value={reps} onChange={(event) => setReps(event.target.value)} placeholder="10" required />
-            </div>
-            <div className="portal-field">
-              <label htmlFor="workout-weight">Weight (kg)</label>
-              <input id="workout-weight" type="number" min="0" step="0.1" value={weight} onChange={(event) => setWeight(event.target.value)} placeholder="Optional" />
-            </div>
-          </div>
-          <div className="portal-form-actions">
-            <button className="portal-button" type="submit" disabled={saving}>
-              <Plus size={16} aria-hidden="true" /> {saving ? 'Saving workout…' : 'Save workout'}
-            </button>
-          </div>
-        </form>
-      </section>
 
       <section className="portal-card">
         <div className="portal-card-heading">
@@ -186,6 +195,7 @@ const WorkoutTracker = () => {
           <div className="portal-empty">No workouts yet. Add your first session above and start building your history.</div>
         )}
       </section>
+      <WorkoutAnalytics workouts={workouts} />
     </div>
   );
 };

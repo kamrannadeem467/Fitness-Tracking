@@ -1,4 +1,6 @@
-import { ArrowRight, CircleHelp, Dumbbell, LockKeyhole, Salad } from 'lucide-react';
+import { useState } from 'react';
+import axios from 'axios';
+import { ArrowRight, CircleHelp, Dumbbell, LockKeyhole, Salad, Send } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import './PublicPages.css';
 
@@ -26,8 +28,40 @@ const helpTopics = [
   },
 ];
 
-const Contact = () => (
-  <div className="public-page">
+const Contact = () => {
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [submitting, setSubmitting] = useState(false);
+  const [feedback, setFeedback] = useState({ type: '', message: '' });
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((currentData) => ({ ...currentData, [name]: value }));
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setSubmitting(true);
+    setFeedback({ type: '', message: '' });
+
+    try {
+      const { data } = await axios.post('http://localhost:5000/api/contact', formData);
+      setFeedback({
+        type: 'success',
+        message: data.message || 'Your message has been sent successfully.',
+      });
+      setFormData({ name: '', email: '', message: '' });
+    } catch (error) {
+      setFeedback({
+        type: 'error',
+        message: error.response?.data?.message || 'Could not send your message. Please try again.',
+      });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="public-page">
     <section className="public-hero public-contact-hero">
       <div className="public-container public-hero-content">
         <span className="public-eyebrow"><span /> How can we help?</span>
@@ -64,6 +98,67 @@ const Contact = () => (
       </div>
     </section>
 
+    <section className="public-contact-form-section" id="contact-form">
+      <div className="public-container">
+        <div className="public-section-heading">
+          <span className="public-eyebrow"><span /> Get in touch</span>
+          <h2>Send us a message.</h2>
+          <p>Have a question or need a hand? Fill in the form and we’ll be happy to help.</p>
+        </div>
+        <form className="public-contact-form" onSubmit={handleSubmit}>
+          <div className="public-contact-form-grid">
+            <div className="public-contact-field">
+              <label htmlFor="contact-name">Name</label>
+              <input
+                id="contact-name"
+                name="name"
+                type="text"
+                autoComplete="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Your name"
+                required
+              />
+            </div>
+            <div className="public-contact-field">
+              <label htmlFor="contact-email">Email</label>
+              <input
+                id="contact-email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="you@example.com"
+                required
+              />
+            </div>
+          </div>
+          <div className="public-contact-field">
+            <label htmlFor="contact-message">Message</label>
+            <textarea
+              id="contact-message"
+              name="message"
+              value={formData.message}
+              onChange={handleChange}
+              placeholder="How can we help?"
+              rows="6"
+              required
+            />
+          </div>
+          {feedback.message && (
+            <div className={`public-contact-feedback is-${feedback.type}`} role={feedback.type === 'error' ? 'alert' : 'status'}>
+              {feedback.message}
+            </div>
+          )}
+          <button className="public-button public-button-primary public-contact-submit" type="submit" disabled={submitting}>
+            <Send size={16} aria-hidden="true" />
+            {submitting ? 'Sending message…' : 'Send message'}
+          </button>
+        </form>
+      </div>
+    </section>
+
     <section className="public-faq">
       <div className="public-container public-faq-grid">
         <div className="public-faq-intro">
@@ -89,6 +184,7 @@ const Contact = () => (
       </div>
     </section>
   </div>
-);
+  );
+};
 
 export default Contact;

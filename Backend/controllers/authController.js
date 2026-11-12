@@ -1,7 +1,10 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const sendEmail = require("../utils/sendEmail"); // Aapki utility file
+const sendEmail = require("../utils/sendEmail");
+const { OAuth2Client } = require('google-auth-library');
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Helper: Token Generator
 const generateToken = (id, role) => {
@@ -13,7 +16,7 @@ const generateToken = (id, role) => {
 // 1. REGISTER
 const registerUser = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body;
 
     if (!name || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
@@ -24,7 +27,7 @@ const registerUser = async (req, res) => {
       if (!userExists.isVerified) {
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         userExists.otp = otp;
-        userExists.otpExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
+        userExists.otpExpires = Date.now() + 10 * 60 * 1000;
         await userExists.save();
 
         const message = `<h2>Email Verification</h2><p>Your OTP code is:</p><h1 style="color: #4F46E5;">${otp}</h1>`;
@@ -35,17 +38,18 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ message: "User already exists" });
     }
 
-    // Generate 6-digit OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpires = Date.now() + 10 * 60 * 1000; // 10 mins expiry
+    const otpExpires = Date.now() + 10 * 60 * 1000;
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
+    // Agar role explicitly bheja jaye (jaise admin banana ho), toh wo use ho warna default "user"
     const user = await User.create({
       name,
       email,
       password: hashedPassword,
+      role: role || "user",
       otp,
       otpExpires,
       isVerified: false,
@@ -146,7 +150,7 @@ const loginUser = async (req, res) => {
   }
 };
 
-// 1. Forgot Password (Send OTP)
+// 4. Forgot Password (Send OTP)
 const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
@@ -159,13 +163,11 @@ const forgotPassword = async (req, res) => {
       return res.status(404).json({ message: "User with this email does not exist" });
     }
 
-    // Generate 6-digit OTP and expiry (10 minutes)
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     user.otp = otp;
     user.otpExpires = Date.now() + 10 * 60 * 1000;
     await user.save();
 
-    // Send Email
     const message = `
       <h2>Password Reset Request</h2>
       <p>Your OTP code to reset password is:</p>
@@ -185,7 +187,7 @@ const forgotPassword = async (req, res) => {
   }
 };
 
-// 2. Reset Password
+// 5. Reset Password
 const resetPassword = async (req, res) => {
   try {
     const { email, otp, newPassword } = req.body;
@@ -199,16 +201,13 @@ const resetPassword = async (req, res) => {
       return res.status(400).json({ message: "User not found" });
     }
 
-    // Check OTP and Expiry
     if (user.otp !== otp || user.otpExpires < Date.now()) {
       return res.status(400).json({ message: "Invalid or expired OTP" });
     }
 
-    // Hash new password
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(newPassword, salt);
 
-    // Clear OTP fields
     user.otp = undefined;
     user.otpExpires = undefined;
     await user.save();
@@ -219,15 +218,11 @@ const resetPassword = async (req, res) => {
   }
 };
 
-const { OAuth2Client } = require('google-auth-library');
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-
-// Google Login
+// 6. Google Login
 const googleLogin = async (req, res) => {
   try {
-    const { token } = req.body; // Frontend se Google ka ID token aayega
+    const { token } = req.body;
 
-    // Token verify karein
     const ticket = await client.verifyIdToken({
       idToken: token,
       audience: process.env.GOOGLE_CLIENT_ID,
@@ -235,21 +230,18 @@ const googleLogin = async (req, res) => {
 
     const { name, email } = ticket.getPayload();
 
-    // Check karein ke user pehle se registered hai ya nahi
     let user = await User.findOne({ email });
 
     if (!user) {
-      // Agar naya user hai toh bina password ke create kar dein aur verified mark kardein
       user = await User.create({
         name,
         email,
-        password: "", // Social login mein password ki zaroorat nahi
+        password: "", 
         isVerified: true,
-        role: "user"
+        role: "user" // Default role for social logins
       });
     }
 
-    // Apna JWT token generate karein
     const jwtToken = generateToken(user._id, user.role);
 
     return res.status(200).json({
@@ -267,4 +259,11 @@ const googleLogin = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, verifyOTP, loginUser, forgotPassword, resetPassword, googleLogin };
+module.exports = { 
+  registerUser, 
+  verifyOTP, 
+  loginUser, 
+  forgotPassword, 
+  resetPassword, 
+  googleLogin 
+};
