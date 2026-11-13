@@ -44,6 +44,32 @@ const getWorkouts = async (req, res) => {
   }
 };
 
+// @desc    Update Workout
+// @route   PUT /api/workouts/:id
+// @access  Private
+const updateWorkout = async (req, res) => {
+  try {
+    const { title, category, exercises } = req.body;
+
+    if (!title || !Array.isArray(exercises) || exercises.length === 0) {
+      return res.status(400).json({ message: "Title and at least one exercise are required" });
+    }
+
+    const updatedWorkout = await Workout.findOneAndUpdate(
+      { _id: req.params.id, userId: req.user._id },
+      { title, category, exercises },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedWorkout) {
+      return res.status(404).json({ message: "Workout not found" });
+    }
+
+    res.status(200).json({ success: true, updatedWorkout });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 // @desc    Delete workout
 // @route   DELETE /api/workouts/:id
 // @access  Private
@@ -67,4 +93,4 @@ const deleteWorkout = async (req, res) => {
   }
 };
 
-module.exports = { createWorkout, getWorkouts, deleteWorkout };
+module.exports = { createWorkout, getWorkouts, updateWorkout, deleteWorkout };

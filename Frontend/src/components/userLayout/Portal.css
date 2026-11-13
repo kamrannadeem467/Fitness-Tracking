@@ -311,6 +311,28 @@
   line-height: 1.7;
 }
 
+.portal-page-actions,
+.portal-report-export {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.portal-page-actions {
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.portal-report-export {
+  flex-wrap: wrap;
+}
+
+.portal-report-error {
+  flex-basis: 100%;
+  color: #a14338;
+  font-size: 10px;
+}
+
 .portal-eyebrow {
   color: var(--portal-green);
   font-size: 9px;
@@ -594,6 +616,68 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
+}
+
+.portal-entry-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.portal-entry-edit {
+  min-height: 30px;
+  padding: 0 9px;
+  font-size: 10px;
+}
+
+.portal-entry-filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.portal-entry-search {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+}
+
+.portal-entry-search svg {
+  position: absolute;
+  left: 12px;
+  color: #93a097;
+  pointer-events: none;
+}
+
+.portal-entry-search input,
+.portal-entry-filter {
+  width: 100%;
+  min-height: 42px;
+  padding: 10px 12px;
+  border: 1px solid #dfe7df;
+  border-radius: 7px;
+  outline: none;
+  background: #fff;
+  color: #25372d;
+  font: inherit;
+  font-size: 12px;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.portal-entry-search input {
+  padding-left: 37px;
+}
+
+.portal-entry-search input:focus,
+.portal-entry-filter:focus {
+  border-color: #83b77b;
+  box-shadow: 0 0 0 3px rgba(131, 183, 123, 0.15);
+}
+
+.portal-entry-filter {
+  width: min(100%, 220px);
 }
 
 .portal-entry h3 {
@@ -1267,11 +1351,23 @@
     flex-direction: column;
   }
 
+  .portal-page-actions {
+    justify-content: flex-start;
+  }
+
   .portal-summary-grid,
   .portal-form-grid,
   .portal-form-grid-three,
   .portal-profile-details {
     grid-template-columns: 1fr;
+  }
+
+  .portal-entry-filters {
+    flex-direction: column;
+  }
+
+  .portal-entry-filter {
+    width: 100%;
   }
 
   .portal-footer {

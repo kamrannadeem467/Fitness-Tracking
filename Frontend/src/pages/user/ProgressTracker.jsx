@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
-import { ArrowDownRight, Plus, Ruler, Scale } from 'lucide-react';
+import { ArrowDownRight, Pencil, Plus, Ruler, Scale } from 'lucide-react';
 import EntryModal from '../../components/userLayout/EntryModal';
+import ReportExport from '../../components/userLayout/ReportExport';
 
 const ProgressTracker = () => {
   const [progressLogs, setProgressLogs] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingLog, setEditingLog] = useState(null);
   const [weight, setWeight] = useState('');
   const [bodyFatPercentage, setBodyFatPercentage] = useState('');
   const [chest, setChest] = useState('');
@@ -16,7 +18,34 @@ const ProgressTracker = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const closeModal = useCallback(() => setIsModalOpen(false), []);
+  const closeModal = useCallback(() => {
+    setIsModalOpen(false);
+    setEditingLog(null);
+  }, []);
+
+  const openCreateModal = () => {
+    setEditingLog(null);
+    setWeight('');
+    setBodyFatPercentage('');
+    setChest('');
+    setWaist('');
+    setArms('');
+    setNotes('');
+    setError('');
+    setIsModalOpen(true);
+  };
+
+  const openEditModal = (log) => {
+    setEditingLog(log);
+    setWeight(log.weight ?? '');
+    setBodyFatPercentage(log.bodyFatPercentage ?? '');
+    setChest(log.measurements?.chest ?? '');
+    setWaist(log.measurements?.waist ?? '');
+    setArms(log.measurements?.arms ?? '');
+    setNotes(log.notes || '');
+    setError('');
+    setIsModalOpen(true);
+  };
 
   const fetchProgress = async () => {
     try {
@@ -56,8 +85,13 @@ const ProgressTracker = () => {
         notes,
       };
 
-      await axios.post('http://localhost:5000/api/progress', payload, config);
-      setMessage('Progress recorded successfully.');
+      if (editingLog) {
+        await axios.put(`http://localhost:5000/api/progress/${editingLog._id}`, payload, config);
+        setMessage('Progress updated successfully.');
+      } else {
+        await axios.post('http://localhost:5000/api/progress', payload, config);
+        setMessage('Progress recorded successfully.');
+      }
       setWeight('');
       setBodyFatPercentage('');
       setChest('');
@@ -74,6 +108,17 @@ const ProgressTracker = () => {
   };
 
   const latestLog = progressLogs[0];
+  const reportHeaders = ['Date', 'Weight (kg)', 'Body fat (%)', 'Chest (in)', 'Waist (in)', 'Arms (in)', 'Thighs (in)', 'Notes'];
+  const reportRows = progressLogs.map((log) => [
+    new Date(log.date).toLocaleDateString(),
+    log.weight,
+    log.bodyFatPercentage,
+    log.measurements?.chest,
+    log.measurements?.waist,
+    log.measurements?.arms,
+    log.measurements?.thighs,
+    log.notes,
+  ]);
 
   return (
     <div className="portal-page">
@@ -83,17 +128,20 @@ const ProgressTracker = () => {
           <h1>Progress tracker</h1>
           <p>Keep personal milestones in one place and look back at how far you have come.</p>
         </div>
-        <button className="portal-button" type="button" onClick={() => setIsModalOpen(true)}>
-          <Plus size={16} aria-hidden="true" /> Add check-in
-        </button>
+        <div className="portal-page-actions">
+          <ReportExport title="Progress report" filename="progress-report" headers={reportHeaders} rows={reportRows} />
+          <button className="portal-button" type="button" onClick={openCreateModal}>
+            <Plus size={16} aria-hidden="true" /> Add check-in
+          </button>
+        </div>
       </div>
 
       {message && <div className="portal-alert portal-alert-success" role="status">{message}</div>}
       {error && !isModalOpen && <div className="portal-alert portal-alert-error" role="alert">{error}</div>}
       {isModalOpen && (
         <EntryModal
-          title="Record a check-in"
-          description="Measurements are optional. Add what feels useful to track."
+          title={editingLog ? 'Edit check-in' : 'Record a check-in'}
+          description={editingLog ? 'Update the details in this progress check-in.' : 'Measurements are optional. Add what feels useful to track.'}
           onClose={closeModal}
         >
           <form className="portal-form" onSubmit={handleSubmit}>
@@ -122,7 +170,8 @@ const ProgressTracker = () => {
             {error && <div className="portal-alert portal-alert-error" role="alert">{error}</div>}
             <div className="portal-form-actions">
               <button className="portal-button" type="submit" disabled={saving}>
-                <Plus size={16} aria-hidden="true" /> {saving ? 'Saving check-in…' : 'Save check-in'}
+                {editingLog ? <Pencil size={16} aria-hidden="true" /> : <Plus size={16} aria-hidden="true" />}
+                {saving ? 'Saving check-in…' : editingLog ? 'Update check-in' : 'Save check-in'}
               </button>
               <button className="portal-button portal-button-secondary" type="button" onClick={closeModal}>Cancel</button>
             </div>
@@ -167,7 +216,12 @@ const ProgressTracker = () => {
                     <h3>{log.weight} kg</h3>
                     <div className="portal-entry-meta">{new Date(log.date).toLocaleDateString()}</div>
                   </div>
-                  {log.bodyFatPercentage && <span className="portal-badge">{log.bodyFatPercentage}% body fat</span>}
+                  <div className="portal-entry-actions">
+                    {log.bodyFatPercentage && <span className="portal-badge">{log.bodyFatPercentage}% body fat</span>}
+                    <button className="portal-button portal-button-secondary portal-entry-edit" type="button" onClick={() => openEditModal(log)} aria-label={`Edit progress check-in from ${new Date(log.date).toLocaleDateString()}`}>
+                      <Pencil size={14} aria-hidden="true" /> Edit
+                    </button>
+                  </div>
                 </div>
                 <div className="portal-entry-detail">
                   {log.measurements && (

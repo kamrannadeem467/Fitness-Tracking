@@ -35,6 +35,32 @@ const getNutrition = async (req, res) => {
   }
 };
 
+// @desc    Update Nutrition Log
+// @route   PUT /api/nutrition/:id
+// @access  Private
+const updateNutrition = async (req, res) => {
+  try {
+    const { mealType, foodItems } = req.body;
+
+    if (!mealType || !Array.isArray(foodItems) || foodItems.length === 0) {
+      return res.status(400).json({ message: "Meal type and food items are required" });
+    }
+
+    const updatedNutrition = await Nutrition.findOneAndUpdate(
+      { _id: req.params.id, userId: req.user._id },
+      { mealType, foodItems },
+      { returnDocument: 'after', runValidators: true }
+    );
+
+    if (!updatedNutrition) {
+      return res.status(404).json({ message: "Nutrition log not found" });
+    }
+
+    res.status(200).json({ success: true, updatedNutrition });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 // @desc    Delete nutrition log
 // @route   DELETE /api/nutrition/:id
 // @access  Private
@@ -57,4 +83,4 @@ const deleteNutrition = async (req, res) => {
   }
 };
 
-module.exports = { createNutrition, getNutrition, deleteNutrition };
+module.exports = { createNutrition, getNutrition, updateNutrition, deleteNutrition };

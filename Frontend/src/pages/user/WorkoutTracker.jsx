@@ -1,12 +1,16 @@
 import { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
-import { Activity, Dumbbell, Plus, Timer } from 'lucide-react';
+import { Activity, Dumbbell, Pencil, Plus, Search, Timer } from 'lucide-react';
 import EntryModal from '../../components/userLayout/EntryModal';
+import ReportExport from '../../components/userLayout/ReportExport';
 import WorkoutAnalytics from '../../components/userLayout/home/userdashboard/WorkoutAnalytics';
 
 const WorkoutTracker = () => {
   const [workouts, setWorkouts] = useState([]);
+  const [search, setSearch] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingWorkout, setEditingWorkout] = useState(null);
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('strength');
   const [exerciseName, setExerciseName] = useState('');
@@ -17,7 +21,35 @@ const WorkoutTracker = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const closeModal = useCallback(() => setIsModalOpen(false), []);
+  const closeModal = useCallback(() => {
+    setIsModalOpen(false);
+    setEditingWorkout(null);
+  }, []);
+
+  const openCreateModal = () => {
+    setEditingWorkout(null);
+    setTitle('');
+    setCategory('strength');
+    setExerciseName('');
+    setSets('');
+    setReps('');
+    setWeight('');
+    setError('');
+    setIsModalOpen(true);
+  };
+
+  const openEditModal = (workout) => {
+    const exercise = workout.exercises[0];
+    setEditingWorkout(workout);
+    setTitle(workout.title);
+    setCategory(workout.category);
+    setExerciseName(exercise?.exerciseName || '');
+    setSets(exercise?.sets ?? '');
+    setReps(exercise?.reps ?? '');
+    setWeight(exercise?.weight ?? '');
+    setError('');
+    setIsModalOpen(true);
+  };
 
   const fetchWorkouts = async () => {
     try {
@@ -57,8 +89,17 @@ const WorkoutTracker = () => {
         }],
       };
 
-      await axios.post('http://localhost:5000/api/workouts', payload, config);
-      setMessage('Workout successfully created.');
+      if (editingWorkout) {
+        payload.exercises = [
+          { ...editingWorkout.exercises[0], ...payload.exercises[0] },
+          ...editingWorkout.exercises.slice(1),
+        ];
+        await axios.put(`http://localhost:5000/api/workouts/${editingWorkout._id}`, payload, config);
+        setMessage('Workout successfully updated.');
+      } else {
+        await axios.post('http://localhost:5000/api/workouts', payload, config);
+        setMessage('Workout successfully created.');
+      }
       setTitle('');
       setExerciseName('');
       setSets('');
@@ -74,6 +115,27 @@ const WorkoutTracker = () => {
   };
 
   const exerciseCount = workouts.reduce((total, workout) => total + (workout.exercises?.length || 0), 0);
+  const filteredWorkouts = workouts.filter((workout) => {
+    const query = search.trim().toLowerCase();
+    const matchesSearch = !query || [
+      workout.title,
+      workout.category,
+      ...(workout.exercises || []).map((exercise) => exercise.exerciseName),
+    ].some((value) => value?.toLowerCase().includes(query));
+    return matchesSearch && (categoryFilter === 'all' || workout.category === categoryFilter);
+  });
+  const reportHeaders = ['Date', 'Workout', 'Category', 'Exercise', 'Sets', 'Reps', 'Weight (kg)'];
+  const reportRows = workouts.flatMap((workout) => (
+    (workout.exercises || []).map((exercise) => [
+      new Date(workout.date).toLocaleDateString(),
+      workout.title,
+      workout.category,
+      exercise.exerciseName,
+      exercise.sets,
+      exercise.reps,
+      exercise.weight,
+    ])
+  ));
 
   return (
     <div className="portal-page">
@@ -83,17 +145,20 @@ const WorkoutTracker = () => {
           <h1>Workout tracker</h1>
           <p>Keep a record of your sessions and celebrate every time you show up.</p>
         </div>
-        <button className="portal-button" type="button" onClick={() => setIsModalOpen(true)}>
-          <Plus size={16} aria-hidden="true" /> Add workout
-        </button>
+        <div className="portal-page-actions">
+          <ReportExport title="Workout report" filename="workout-report" headers={reportHeaders} rows={reportRows} />
+          <button className="portal-button" type="button" onClick={openCreateModal}>
+            <Plus size={16} aria-hidden="true" /> Add workout
+          </button>
+        </div>
       </div>
 
       {message && <div className="portal-alert portal-alert-success" role="status">{message}</div>}
       {error && !isModalOpen && <div className="portal-alert portal-alert-error" role="alert">{error}</div>}
       {isModalOpen && (
         <EntryModal
-          title="Log a workout"
-          description="Add a session and its first exercise to your history."
+          title={editingWorkout ? 'Edit workout' : 'Log a workout'}
+          description={editingWorkout ? 'Update your session details.' : 'Add a session and its first exercise to your history.'}
           onClose={closeModal}
         >
           <form className="portal-form" onSubmit={handleSubmit}>
@@ -133,7 +198,8 @@ const WorkoutTracker = () => {
             {error && <div className="portal-alert portal-alert-error" role="alert">{error}</div>}
             <div className="portal-form-actions">
               <button className="portal-button" type="submit" disabled={saving}>
-                <Plus size={16} aria-hidden="true" /> {saving ? 'Saving workout…' : 'Save workout'}
+                {editingWorkout ? <Pencil size={16} aria-hidden="true" /> : <Plus size={16} aria-hidden="true" />}
+                {saving ? 'Saving workout…' : editingWorkout ? 'Update workout' : 'Save workout'}
               </button>
               <button className="portal-button portal-button-secondary" type="button" onClick={closeModal}>Cancel</button>
             </div>
@@ -165,20 +231,49 @@ const WorkoutTracker = () => {
             <h2>Your workout history</h2>
             <p>Every session is another step forward.</p>
           </div>
-          <span className="portal-badge">{workouts.length} sessions</span>
+          <span className="portal-badge">{filteredWorkouts.length} of {workouts.length} sessions</span>
+        </div>
+        <div className="portal-entry-filters">
+          <label className="portal-entry-search">
+            <Search size={16} aria-hidden="true" />
+            <input
+              type="search"
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Search workouts or exercises"
+              aria-label="Search workouts or exercises"
+            />
+          </label>
+          <select
+            className="portal-entry-filter"
+            value={categoryFilter}
+            onChange={(event) => setCategoryFilter(event.target.value)}
+            aria-label="Filter workouts by category"
+          >
+            <option value="all">All categories</option>
+            <option value="strength">Strength</option>
+            <option value="cardio">Cardio</option>
+            <option value="flexibility">Flexibility</option>
+            <option value="other">Other</option>
+          </select>
         </div>
         {loading ? (
           <div className="portal-empty" role="status">Loading your workout history…</div>
-        ) : workouts.length ? (
+        ) : filteredWorkouts.length ? (
           <div className="portal-entry-list">
-            {workouts.map((workout) => (
+            {filteredWorkouts.map((workout) => (
               <article className="portal-entry" key={workout._id}>
                 <div className="portal-entry-top">
                   <div>
                     <h3>{workout.title}</h3>
                     <div className="portal-entry-meta">{new Date(workout.date).toLocaleDateString()}</div>
                   </div>
-                  <span className="portal-badge">{workout.category}</span>
+                  <div className="portal-entry-actions">
+                    <span className="portal-badge">{workout.category}</span>
+                    <button className="portal-button portal-button-secondary portal-entry-edit" type="button" onClick={() => openEditModal(workout)} aria-label={`Edit ${workout.title}`}>
+                      <Pencil size={14} aria-hidden="true" /> Edit
+                    </button>
+                  </div>
                 </div>
                 <div className="portal-entry-detail">
                   {workout.exercises.map((exercise, index) => (
@@ -191,6 +286,8 @@ const WorkoutTracker = () => {
               </article>
             ))}
           </div>
+        ) : workouts.length ? (
+          <div className="portal-empty">No workouts match your search or selected category.</div>
         ) : (
           <div className="portal-empty">No workouts yet. Add your first session above and start building your history.</div>
         )}
