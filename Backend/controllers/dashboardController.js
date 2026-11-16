@@ -8,22 +8,36 @@ const Progress = require('../models/Progress');
 const getDashboardData = async (req, res) => {
   try {
     const userId = req.user._id;
+    const activityStartDate = new Date();
+    activityStartDate.setUTCHours(0, 0, 0, 0);
+    activityStartDate.setUTCDate(activityStartDate.getUTCDate() - 8);
 
-    // 1. Recent Workouts (Last 5)
-    const recentWorkouts = await Workout.find({ userId }).sort({ date: -1 }).limit(5);
+    const [
+      recentWorkouts,
+      recentNutrition,
+      workoutActivity,
+      nutritionActivity,
+      progressHistory,
+      totalWorkouts,
+      totalNutritionLogs,
+    ] = await Promise.all([
+      Workout.find({ userId }).sort({ date: -1 }).limit(5),
+      Nutrition.find({ userId }).sort({ date: -1 }).limit(5),
+      Workout.find({ userId, date: { $gte: activityStartDate } }).select('date').lean(),
+      Nutrition.find({ userId, date: { $gte: activityStartDate } })
+        .select('date foodItems.calories')
+        .lean(),
+      Progress.find({ userId })
+        .select('date weight')
+        .sort({ date: -1 })
+        .limit(12)
+        .lean(),
+      Workout.countDocuments({ userId }),
+      Nutrition.countDocuments({ userId }),
+    ]);
 
-    // 2. Recent Nutrition Logs (Last 5)
-    const recentNutrition = await Nutrition.find({ userId }).sort({ date: -1 }).limit(5);
-
-    // 3. Progress History (For charts - sorted chronologically)
-    const progressHistory = await Progress.find({ userId }).sort({ date: 1 });
-
-    // 4. Totals / Quick Stats
-    const totalWorkouts = await Workout.countDocuments({ userId });
-    const totalNutritionLogs = await Nutrition.countDocuments({ userId });
-    
-    // Latest weight record
-    const latestProgress = progressHistory.length > 0 ? progressHistory[progressHistory.length - 1] : null;
+    progressHistory.reverse();
+    const latestProgress = progressHistory[progressHistory.length - 1] || null;
 
     res.status(200).json({
       success: true,
@@ -34,6 +48,8 @@ const getDashboardData = async (req, res) => {
       },
       recentWorkouts,
       recentNutrition,
+      workoutActivity,
+      nutritionActivity,
       progressHistory,
     });
   } catch (error) {

@@ -3,6 +3,7 @@ import { Activity, ArrowRight, ChartNoAxesColumnIncreasing, Dumbbell, Salad, Sca
 import { Link } from 'react-router-dom';
 import API from '../../api/axiosInstance';
 import { AuthContext } from '../../context/AuthContext';
+import DashboardAnalytics from '../../components/userLayout/home/userdashboard/DashboardAnalytics';
 
 const UserDashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
@@ -113,6 +114,12 @@ const UserDashboard = () => {
           </Link>
         </section>
       </div>
+
+      <DashboardAnalytics
+        workoutActivity={dashboardData?.workoutActivity}
+        nutritionActivity={dashboardData?.nutritionActivity}
+        progressHistory={dashboardData?.progressHistory}
+      />
     </div>
   );
 };

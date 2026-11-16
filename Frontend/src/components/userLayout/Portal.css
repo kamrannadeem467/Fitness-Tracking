@@ -239,7 +239,7 @@
 }
 
 .portal-topbar-profile {
-  margin-left: auto;
+  margin-left: 0;
   border-radius: 50%;
   text-decoration: none;
 }
@@ -620,7 +620,9 @@
 
 .portal-entry-actions {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
+  justify-content: flex-end;
   gap: 8px;
 }
 
@@ -628,6 +630,15 @@
   min-height: 30px;
   padding: 0 9px;
   font-size: 10px;
+}
+
+.portal-entry-delete {
+  color: #a14338;
+}
+
+.portal-entry-delete:hover {
+  background: #fff4f1;
+  color: #a14338;
 }
 
 .portal-entry-filters {
@@ -722,6 +733,397 @@
   text-align: center;
 }
 
+.workout-planner {
+  display: grid;
+  gap: 16px;
+}
+
+.workout-overdue-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  padding: 13px 15px;
+  border: 1px solid #f1d2cd;
+  border-radius: 9px;
+  background: #fff4f1;
+  color: #96463e;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.workout-overdue-alert > svg {
+  flex: 0 0 auto;
+  margin-top: 1px;
+}
+
+.workout-overdue-alert p {
+  margin: 3px 0 5px;
+  color: #8c625d;
+}
+
+.workout-overdue-alert ul {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding-left: 17px;
+}
+
+.workout-completion-toast {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 15px;
+  border: 1px solid #cfe5cc;
+  border-radius: 9px;
+  background: #f0f8ed;
+  color: #286d49;
+  font-size: 12px;
+  animation: workout-success-enter 240ms ease-out;
+}
+
+.workout-completion-toast strong {
+  margin-right: 4px;
+}
+
+.workout-completion-icon {
+  flex: 0 0 auto;
+  animation: workout-check-pop 400ms ease-out;
+}
+
+@keyframes workout-success-enter {
+  from {
+    opacity: 0;
+    transform: translateY(7px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes workout-check-pop {
+  0% {
+    transform: scale(0.5);
+  }
+
+  65% {
+    transform: scale(1.2);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.workout-section-switch {
+  display: flex;
+  width: fit-content;
+  max-width: 100%;
+  gap: 4px;
+  padding: 4px;
+  overflow-x: auto;
+  border: 1px solid #e6ece7;
+  border-radius: 9px;
+  background: #fff;
+}
+
+.workout-section-switch button {
+  display: inline-flex;
+  min-height: 36px;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 7px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #68766d;
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.workout-section-switch button[aria-pressed='true'] {
+  background: #edf6e9;
+  color: var(--portal-green);
+}
+
+.workout-section-switch button span {
+  display: inline-grid;
+  min-width: 19px;
+  height: 19px;
+  place-items: center;
+  padding: 0 5px;
+  border-radius: 10px;
+  background: rgba(27, 122, 86, 0.1);
+  font-size: 9px;
+}
+
+.nutrition-week-nav,
+.nutrition-week-nav-buttons {
+  display: flex;
+  align-items: center;
+}
+
+.nutrition-week-nav {
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--portal-border);
+  border-radius: 9px;
+  background: #fff;
+}
+
+.nutrition-week-nav-buttons {
+  min-width: 0;
+  gap: 9px;
+}
+
+.nutrition-week-nav-buttons strong {
+  color: #435249;
+  font-size: 11px;
+  text-align: center;
+}
+
+.nutrition-analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.nutrition-chart-card .portal-card-heading {
+  margin-bottom: 12px;
+}
+
+.nutrition-chart {
+  width: 100%;
+  height: 260px;
+}
+
+.workout-planner-heading {
+  align-items: center;
+  margin-bottom: 0;
+}
+
+.workout-planner-views {
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 3px;
+  padding: 3px;
+  border: 1px solid #e6ece7;
+  border-radius: 8px;
+  background: #f7f9f6;
+}
+
+.workout-planner-views button,
+.workout-planner-today {
+  min-height: 31px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #6d7a72;
+  cursor: pointer;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.workout-planner-views button.is-active {
+  background: #fff;
+  color: var(--portal-green);
+  box-shadow: 0 1px 4px rgba(28, 54, 38, 0.1);
+}
+
+.workout-planner-period,
+.workout-planner-period-nav {
+  display: flex;
+  align-items: center;
+}
+
+.workout-planner-period {
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.workout-planner-period-nav {
+  gap: 8px;
+}
+
+.workout-planner-period-nav strong {
+  min-width: 150px;
+  color: #435249;
+  font-size: 11px;
+  text-align: center;
+}
+
+.workout-planner-icon-button {
+  display: inline-grid;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  place-items: center;
+  border: 1px solid #e6ece7;
+  border-radius: 7px;
+  background: #fff;
+  color: #68766d;
+  cursor: pointer;
+}
+
+.workout-planner-icon-button:hover,
+.workout-planner-today:hover {
+  background: #f2f7f1;
+  color: var(--portal-green);
+}
+
+.workout-planner-icon-button:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
+.workout-planner-period .portal-badge {
+  gap: 5px;
+}
+
+.workout-plan-form {
+  display: grid;
+  grid-template-columns: minmax(150px, 1fr) minmax(145px, 0.7fr) minmax(120px, 0.6fr) auto;
+  align-items: end;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid #edf1ed;
+  border-radius: 9px;
+  background: #fbfcfa;
+}
+
+.workout-plan-form .portal-button {
+  min-height: 42px;
+  white-space: nowrap;
+}
+
+.workout-plan-days {
+  display: grid;
+  gap: 14px;
+}
+
+.workout-plan-day {
+  display: grid;
+  gap: 8px;
+}
+
+.workout-plan-day h3 {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+  color: #66746b;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.workout-plan-day h3 svg {
+  color: var(--portal-green);
+}
+
+.workout-plan-day-list {
+  display: grid;
+  gap: 7px;
+}
+
+.workout-plan-item {
+  display: flex;
+  min-height: 52px;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid #edf1ed;
+  border-radius: 8px;
+}
+
+.workout-plan-check {
+  display: grid;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+  place-items: center;
+  padding: 0;
+  border: 1px solid #cfdbd0;
+  border-radius: 6px;
+  background: #fff;
+  color: #fff;
+  cursor: pointer;
+}
+
+.workout-plan-item.is-complete .workout-plan-check {
+  border-color: var(--portal-green);
+  background: var(--portal-green);
+}
+
+.workout-plan-item-copy {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+  gap: 9px;
+}
+
+.workout-plan-item-copy strong {
+  overflow: hidden;
+  color: #35443b;
+  font-size: 11px;
+  text-overflow: ellipsis;
+}
+
+.workout-plan-item.is-complete .workout-plan-item-copy strong {
+  color: #89958d;
+  text-decoration: line-through;
+}
+
+.workout-plan-item.is-overdue {
+  border-color: #f1d2cd;
+  background: #fffaf9;
+}
+
+.workout-plan-missed {
+  background: #fff0ed;
+  color: #a14338;
+}
+
+.workout-plan-delete {
+  color: #9a6a64;
+}
+
+.workout-history-pagination,
+.workout-history-pagination > div {
+  display: flex;
+  align-items: center;
+}
+
+.workout-history-pagination {
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 16px;
+  color: #7c8981;
+  font-size: 10px;
+}
+
+.workout-history-pagination > div {
+  gap: 10px;
+}
+
+.workout-history-pagination .portal-button {
+  min-height: 32px;
+  padding: 0 10px;
+  font-size: 10px;
+}
+
+.workout-history-pagination .portal-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
 .portal-summary-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -765,6 +1167,26 @@
   display: grid;
   grid-template-columns: minmax(0, 1.5fr) minmax(220px, 0.8fr);
   gap: 18px;
+}
+
+.dashboard-analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.dashboard-chart-card .portal-card-heading {
+  margin-bottom: 12px;
+}
+
+.dashboard-chart {
+  width: 100%;
+  height: 260px;
+}
+
+.dashboard-chart-card-wide {
+  grid-column: 1 / -1;
 }
 
 .portal-quick-links {
@@ -1265,6 +1687,18 @@
   .portal-dashboard-grid {
     grid-template-columns: 1fr;
   }
+
+  .dashboard-analytics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-chart-card-wide {
+    grid-column: auto;
+  }
+
+  .nutrition-analytics-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 720px) {
@@ -1321,6 +1755,20 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .workout-plan-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .nutrition-week-nav-buttons {
+    flex: 1;
+    gap: 5px;
+  }
+
+  .nutrition-week-nav-buttons strong {
+    flex: 1;
+    font-size: 10px;
+  }
+
   .portal-auth-layout {
     width: min(480px, 100%);
     min-height: 0;
@@ -1358,8 +1806,53 @@
   .portal-summary-grid,
   .portal-form-grid,
   .portal-form-grid-three,
-  .portal-profile-details {
+  .portal-profile-details,
+  .workout-plan-form {
     grid-template-columns: 1fr;
+  }
+
+  .workout-planner-heading,
+  .workout-planner-period {
+    align-items: flex-start;
+  }
+
+  .workout-planner-heading {
+    flex-direction: column;
+  }
+
+  .workout-planner-period {
+    flex-direction: column;
+  }
+
+  .workout-planner-period-nav {
+    width: 100%;
+    justify-content: space-between;
+    gap: 5px;
+  }
+
+  .workout-planner-period-nav strong {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .workout-history-pagination,
+  .workout-history-pagination > div {
+    align-items: flex-start;
+  }
+
+  .workout-history-pagination {
+    flex-direction: column;
+  }
+
+  .workout-history-pagination > div {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .workout-plan-item-copy {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
   }
 
   .portal-entry-filters {

@@ -1,18 +1,13 @@
 import { useContext, useEffect, useState } from 'react';
-import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { Activity, ArrowRight, Menu, X } from 'lucide-react';
 import { AuthContext } from '../../context/AuthContext';
+import WorkoutNotificationBell from './WorkoutNotificationBell';
 import './UserLayout.css';
 
 const Header = () => {
-  const { user, token, logout } = useContext(AuthContext);
+  const { user, token } = useContext(AuthContext);
   const [menuOpen, setMenuOpen] = useState(false);
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  useEffect(() => {
-    setMenuOpen(false);
-  }, [location.pathname]);
 
   useEffect(() => {
     if (!menuOpen) return undefined;
@@ -24,12 +19,6 @@ const Header = () => {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [menuOpen]);
-
-  const handleLogout = () => {
-    logout();
-    setMenuOpen(false);
-    navigate('/user/login');
-  };
 
   const linkClassName = ({ isActive }) =>
     `site-header-link${isActive ? ' is-active' : ''}`;
@@ -59,19 +48,19 @@ const Header = () => {
           aria-label="Main navigation"
         >
           <div className="site-navigation-links">
-            <NavLink className={linkClassName} to="/home" end>Home</NavLink>
-            <NavLink className={linkClassName} to="/about">About</NavLink>
-            <NavLink className={linkClassName} to="/contact">Contact</NavLink>
+            <NavLink className={linkClassName} onClick={() => setMenuOpen(false)} to="/home" end>Home</NavLink>
+            <NavLink className={linkClassName} onClick={() => setMenuOpen(false)} to="/about">About</NavLink>
+            <NavLink className={linkClassName} onClick={() => setMenuOpen(false)} to="/contact">Contact</NavLink>
             {token && (
               user?.role === 'admin' ? (
                 <>
-                  <NavLink className={linkClassName} to="/admin/dashboard">Dashboard</NavLink>
-                  <NavLink className={linkClassName} to="/admin/profile">Profile</NavLink>
+                  <NavLink className={linkClassName} onClick={() => setMenuOpen(false)} to="/admin/dashboard">Dashboard</NavLink>
+                  <NavLink className={linkClassName} onClick={() => setMenuOpen(false)} to="/admin/profile">Profile</NavLink>
                 </>
               ) : (
                 <>
-                  <NavLink className={linkClassName} to="/user/dashboard">Dashboard</NavLink>
-                  <NavLink className={linkClassName} to="/user/profile">My profile</NavLink>
+                  <NavLink className={linkClassName} onClick={() => setMenuOpen(false)} to="/user/dashboard">Dashboard</NavLink>
+                  <NavLink className={linkClassName} onClick={() => setMenuOpen(false)} to="/user/profile">My profile</NavLink>
                 </>
               )
             )}
@@ -89,14 +78,15 @@ const Header = () => {
               </>
             ) : (
               <>
-                <Link className="site-header-login" to="/user/login">Sign In</Link>
-                <Link className="site-header-button" to="/user/register">
+                <Link className="site-header-login" onClick={() => setMenuOpen(false)} to="/user/login">Sign In</Link>
+                <Link className="site-header-button" onClick={() => setMenuOpen(false)} to="/user/register">
                   Get started <ArrowRight size={15} aria-hidden="true" />
                 </Link>
               </>
             )}
           </div>
         </nav>
+        {token && user?.role === 'user' && <WorkoutNotificationBell variant="site" />}
       </div>
     </header>
   );

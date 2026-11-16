@@ -1,5 +1,6 @@
 import { Route } from "react-router-dom";
 import ProtectedRoute from "../components/guards/ProtectedRoute";
+import GuestRoute from "../components/guards/GuestRoute";
 import UserLayout from "../components/userLayout/UserLayout";
 import DashboardLayout from "../components/userLayout/DashboardLayout"; // Naya Sidebar layout
 
@@ -22,8 +23,10 @@ import ProgressTracker from "../pages/user/ProgressTracker";
 export const UserRoutesList = (
   <>
     {/* --- 1. Auth & Public Non-Sidebar Pages --- */}
-    <Route path="/user/login" element={<UserLogin />} />
-    <Route path="/user/register" element={<UserRegister />} />
+    <Route element={<GuestRoute />}>
+      <Route path="/user/login" element={<UserLogin />} />
+      <Route path="/user/register" element={<UserRegister />} />
+    </Route>
     <Route path="/forgot-password" element={<ForgotPassword />} />
 
     {/* --- 2. Public Pages (Header & Footer only, NO Sidebar) --- */}

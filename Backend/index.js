@@ -12,6 +12,7 @@ const pageRoutes = require("./routes/pageRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const userRoutes = require("./routes/userRoutes");
 const workoutRoutes = require("./routes/workoutRoutes");
+const workoutPlanRoutes = require("./routes/workoutPlanRoutes");
 const nutritionRoutes = require("./routes/nutritionRoutes");
 const progressRoutes = require("./routes/progressRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
@@ -34,6 +35,7 @@ app.use("/api", pageRoutes); // Home, About
 
 app.use("/api/user", userRoutes); // User Profile
 app.use('/api/workouts', workoutRoutes);
+app.use('/api/workout-plans', workoutPlanRoutes);
 app.use('/api/nutrition', nutritionRoutes);
 app.use('/api/progress', progressRoutes);
 app.use('/api/dashboard', dashboardRoutes);

@@ -1,14 +1,18 @@
 import { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
-import { Activity, Dumbbell, Pencil, Plus, Search, Timer } from 'lucide-react';
+import { Activity, Dumbbell, Pencil, Plus, Search, Timer, Trash2 } from 'lucide-react';
 import EntryModal from '../../components/userLayout/EntryModal';
 import ReportExport from '../../components/userLayout/ReportExport';
 import WorkoutAnalytics from '../../components/userLayout/home/userdashboard/WorkoutAnalytics';
+import WorkoutPlanner from './WorkoutPlanner';
 
 const WorkoutTracker = () => {
+  const historyPageSize = 8;
   const [workouts, setWorkouts] = useState([]);
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
+  const [activeSection, setActiveSection] = useState('plan');
+  const [historyPage, setHistoryPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingWorkout, setEditingWorkout] = useState(null);
   const [title, setTitle] = useState('');
@@ -21,6 +25,7 @@ const WorkoutTracker = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [deletingWorkoutId, setDeletingWorkoutId] = useState('');
   const closeModal = useCallback(() => {
     setIsModalOpen(false);
     setEditingWorkout(null);
@@ -100,6 +105,8 @@ const WorkoutTracker = () => {
         await axios.post('http://localhost:5000/api/workouts', payload, config);
         setMessage('Workout successfully created.');
       }
+      setActiveSection('history');
+      setHistoryPage(1);
       setTitle('');
       setExerciseName('');
       setSets('');
@@ -124,6 +131,36 @@ const WorkoutTracker = () => {
     ].some((value) => value?.toLowerCase().includes(query));
     return matchesSearch && (categoryFilter === 'all' || workout.category === categoryFilter);
   });
+  const handleDeleteWorkout = async (workout) => {
+    if (!window.confirm(`Delete "${workout.title}" from your workout history? This cannot be undone.`)) {
+      return;
+    }
+
+    setDeletingWorkoutId(workout._id);
+    setError('');
+    setMessage('');
+
+    try {
+      const token = localStorage.getItem('token');
+      const config = { headers: { Authorization: `Bearer ${token}` } };
+      await axios.delete(`http://localhost:5000/api/workouts/${workout._id}`, config);
+      setWorkouts((current) => current.filter((item) => item._id !== workout._id));
+      setHistoryPage((current) => Math.min(
+        current,
+        Math.max(1, Math.ceil((filteredWorkouts.length - 1) / historyPageSize)),
+      ));
+      setMessage('Workout deleted successfully.');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Could not delete this workout. Please try again.');
+    } finally {
+      setDeletingWorkoutId('');
+    }
+  };
+  const historyPageCount = Math.ceil(filteredWorkouts.length / historyPageSize);
+  const visibleWorkouts = filteredWorkouts.slice(
+    (historyPage - 1) * historyPageSize,
+    historyPage * historyPageSize,
+  );
   const reportHeaders = ['Date', 'Workout', 'Category', 'Exercise', 'Sets', 'Reps', 'Weight (kg)'];
   const reportRows = workouts.flatMap((workout) => (
     (workout.exercises || []).map((exercise) => [
@@ -225,74 +262,120 @@ const WorkoutTracker = () => {
         </div>
       </div>
 
-      <section className="portal-card">
-        <div className="portal-card-heading">
-          <div>
-            <h2>Your workout history</h2>
-            <p>Every session is another step forward.</p>
+      <div className="workout-section-switch" role="group" aria-label="Workout sections">
+        <button type="button" aria-pressed={activeSection === 'plan'} onClick={() => setActiveSection('plan')}>Plan</button>
+        <button type="button" aria-pressed={activeSection === 'history'} onClick={() => setActiveSection('history')}>
+          History <span>{workouts.length}</span>
+        </button>
+        <button type="button" aria-pressed={activeSection === 'analytics'} onClick={() => setActiveSection('analytics')}>Analytics</button>
+      </div>
+
+      {activeSection === 'plan' && <WorkoutPlanner />}
+
+      {activeSection === 'history' && (
+        <section className="portal-card">
+          <div className="portal-card-heading">
+            <div>
+              <h2>Your workout history</h2>
+              <p>Every session is another step forward.</p>
+            </div>
+            <span className="portal-badge">{filteredWorkouts.length} of {workouts.length} sessions</span>
           </div>
-          <span className="portal-badge">{filteredWorkouts.length} of {workouts.length} sessions</span>
-        </div>
-        <div className="portal-entry-filters">
-          <label className="portal-entry-search">
-            <Search size={16} aria-hidden="true" />
-            <input
-              type="search"
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search workouts or exercises"
-              aria-label="Search workouts or exercises"
-            />
-          </label>
-          <select
-            className="portal-entry-filter"
-            value={categoryFilter}
-            onChange={(event) => setCategoryFilter(event.target.value)}
-            aria-label="Filter workouts by category"
-          >
-            <option value="all">All categories</option>
-            <option value="strength">Strength</option>
-            <option value="cardio">Cardio</option>
-            <option value="flexibility">Flexibility</option>
-            <option value="other">Other</option>
-          </select>
-        </div>
-        {loading ? (
-          <div className="portal-empty" role="status">Loading your workout history…</div>
-        ) : filteredWorkouts.length ? (
-          <div className="portal-entry-list">
-            {filteredWorkouts.map((workout) => (
-              <article className="portal-entry" key={workout._id}>
-                <div className="portal-entry-top">
+          <div className="portal-entry-filters">
+            <label className="portal-entry-search">
+              <Search size={16} aria-hidden="true" />
+              <input
+                type="search"
+                value={search}
+                onChange={(event) => {
+                  setSearch(event.target.value);
+                  setHistoryPage(1);
+                }}
+                placeholder="Search workouts or exercises"
+                aria-label="Search workouts or exercises"
+              />
+            </label>
+            <select
+              className="portal-entry-filter"
+              value={categoryFilter}
+              onChange={(event) => {
+                setCategoryFilter(event.target.value);
+                setHistoryPage(1);
+              }}
+              aria-label="Filter workouts by category"
+            >
+              <option value="all">All categories</option>
+              <option value="strength">Strength</option>
+              <option value="cardio">Cardio</option>
+              <option value="flexibility">Flexibility</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          {loading ? (
+            <div className="portal-empty" role="status">Loading your workout history…</div>
+          ) : filteredWorkouts.length ? (
+            <>
+              <div className="portal-entry-list">
+                {visibleWorkouts.map((workout) => (
+                  <article className="portal-entry" key={workout._id}>
+                    <div className="portal-entry-top">
+                      <div>
+                        <h3>{workout.title}</h3>
+                        <div className="portal-entry-meta">{new Date(workout.date).toLocaleDateString()}</div>
+                      </div>
+                      <div className="portal-entry-actions">
+                        <span className="portal-badge">{workout.category}</span>
+                        <button className="portal-button portal-button-secondary portal-entry-edit" type="button" onClick={() => openEditModal(workout)} aria-label={`Edit ${workout.title}`}>
+                          <Pencil size={14} aria-hidden="true" /> Edit
+                        </button>
+                        <button
+                          className="portal-button portal-button-secondary portal-entry-edit portal-entry-delete"
+                          type="button"
+                          onClick={() => handleDeleteWorkout(workout)}
+                          disabled={deletingWorkoutId === workout._id}
+                          aria-label={`Delete ${workout.title}`}
+                        >
+                          <Trash2 size={14} aria-hidden="true" /> Delete
+                        </button>
+                      </div>
+                    </div>
+                    <div className="portal-entry-detail">
+                      {workout.exercises.map((exercise, index) => (
+                        <div key={`${exercise.exerciseName}-${index}`}>
+                          <strong>{exercise.exerciseName}</strong> · {exercise.sets} sets × {exercise.reps} reps
+                          {exercise.weight ? ` · ${exercise.weight} kg` : ''}
+                        </div>
+                      ))}
+                    </div>
+                  </article>
+                ))}
+              </div>
+              {historyPageCount > 1 && (
+                <div className="workout-history-pagination">
+                  <span>
+                    Showing {(historyPage - 1) * historyPageSize + 1}–{Math.min(historyPage * historyPageSize, filteredWorkouts.length)} of {filteredWorkouts.length}
+                  </span>
                   <div>
-                    <h3>{workout.title}</h3>
-                    <div className="portal-entry-meta">{new Date(workout.date).toLocaleDateString()}</div>
-                  </div>
-                  <div className="portal-entry-actions">
-                    <span className="portal-badge">{workout.category}</span>
-                    <button className="portal-button portal-button-secondary portal-entry-edit" type="button" onClick={() => openEditModal(workout)} aria-label={`Edit ${workout.title}`}>
-                      <Pencil size={14} aria-hidden="true" /> Edit
+                    <button className="portal-button portal-button-secondary" type="button" onClick={() => setHistoryPage((page) => page - 1)} disabled={historyPage === 1}>
+                      Previous
+                    </button>
+                    <span>Page {historyPage} of {historyPageCount}</span>
+                    <button className="portal-button portal-button-secondary" type="button" onClick={() => setHistoryPage((page) => page + 1)} disabled={historyPage === historyPageCount}>
+                      Next
                     </button>
                   </div>
                 </div>
-                <div className="portal-entry-detail">
-                  {workout.exercises.map((exercise, index) => (
-                    <div key={`${exercise.exerciseName}-${index}`}>
-                      <strong>{exercise.exerciseName}</strong> · {exercise.sets} sets × {exercise.reps} reps
-                      {exercise.weight ? ` · ${exercise.weight} kg` : ''}
-                    </div>
-                  ))}
-                </div>
-              </article>
-            ))}
-          </div>
-        ) : workouts.length ? (
-          <div className="portal-empty">No workouts match your search or selected category.</div>
-        ) : (
-          <div className="portal-empty">No workouts yet. Add your first session above and start building your history.</div>
-        )}
-      </section>
-      <WorkoutAnalytics workouts={workouts} />
+              )}
+            </>
+          ) : workouts.length ? (
+            <div className="portal-empty">No workouts match your search or selected category.</div>
+          ) : (
+            <div className="portal-empty">No workouts yet. Add your first session above and start building your history.</div>
+          )}
+        </section>
+      )}
+
+      {activeSection === 'analytics' && <WorkoutAnalytics workouts={workouts} />}
     </div>
   );
 };

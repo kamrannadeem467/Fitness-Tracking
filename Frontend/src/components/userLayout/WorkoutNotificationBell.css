@@ -1,0 +1,172 @@
+.workout-notification-wrap {
+  position: relative;
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+
+.workout-notification-wrap.is-site {
+  margin-left: 0;
+}
+
+.workout-notification-button {
+  position: relative;
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 1px solid #e6ece7;
+  border-radius: 9px;
+  background: #fff;
+  color: #53645a;
+  cursor: pointer;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+.workout-notification-button:hover,
+.workout-notification-button[aria-expanded='true'] {
+  background: #f2f7f1;
+  color: #1b7a56;
+}
+
+.workout-notification-count {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  display: grid;
+  min-width: 18px;
+  height: 18px;
+  place-items: center;
+  padding: 0 4px;
+  border: 2px solid #fff;
+  border-radius: 10px;
+  background: #b94d42;
+  color: #fff;
+  font-size: 8px;
+  font-weight: 700;
+}
+
+.workout-notification-panel {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + 11px);
+  right: 0;
+  width: min(350px, calc(100vw - 32px));
+  max-height: min(440px, calc(100vh - 105px));
+  overflow-y: auto;
+  border: 1px solid #e6ece7;
+  border-radius: 11px;
+  background: #fff;
+  box-shadow: 0 16px 42px rgba(25, 45, 32, 0.16);
+}
+
+.workout-notification-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 15px;
+  border-bottom: 1px solid #edf1ed;
+  color: #2b3c32;
+  font-size: 12px;
+}
+
+.workout-notification-heading > span {
+  color: #1b7a56;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.workout-notification-list {
+  display: grid;
+}
+
+.workout-notification-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid #f0f3f0;
+  color: inherit;
+  text-decoration: none;
+}
+
+.workout-notification-item:last-child {
+  border-bottom: 0;
+}
+
+.workout-notification-item:hover,
+.workout-notification-item.is-unread {
+  background: #f7faf5;
+}
+
+.workout-notification-icon {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  place-items: center;
+  border-radius: 9px;
+  background: #edf6e9;
+  color: #1b7a56;
+}
+
+.workout-notification-copy {
+  display: grid;
+  min-width: 0;
+  flex: 1;
+  gap: 4px;
+}
+
+.workout-notification-copy strong {
+  color: #405148;
+  font-size: 10px;
+}
+
+.workout-notification-copy small {
+  overflow: hidden;
+  color: #7c8981;
+  font-size: 9px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.workout-notification-unread-dot {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 8px;
+  border-radius: 50%;
+  background: #1b7a56;
+}
+
+.workout-notification-empty,
+.workout-notification-error {
+  display: grid;
+  gap: 9px;
+  padding: 22px 16px;
+  color: #78867d;
+  font-size: 10px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.workout-notification-error {
+  color: #a14338;
+}
+
+.workout-notification-error button {
+  justify-self: center;
+  padding: 5px 9px;
+  border: 1px solid #ead3cf;
+  border-radius: 6px;
+  background: #fff;
+  color: #a14338;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+}
+
+@media (max-width: 520px) {
+  .workout-notification-panel {
+    right: -34px;
+  }
+}

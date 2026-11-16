@@ -1,14 +1,34 @@
 import { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
-import { Apple, Flame, Pencil, Plus, Salad, Search } from 'lucide-react';
+import { Apple, ChevronLeft, ChevronRight, Flame, Pencil, Plus, Salad, Search } from 'lucide-react';
 import EntryModal from '../../components/userLayout/EntryModal';
 import ReportExport from '../../components/userLayout/ReportExport';
 import NutritionAnalytics from '../../components/userLayout/home/userdashboard/NutritionAnalytics';
+
+const mealsPerPage = 8;
+
+const formatDateKey = (date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+const getWeekRange = (date) => {
+  const start = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  start.setDate(start.getDate() - ((start.getDay() + 6) % 7));
+  const end = new Date(start);
+  end.setDate(end.getDate() + 6);
+  return { start, end };
+};
 
 const NutritionTracker = () => {
   const [nutritionLogs, setNutritionLogs] = useState([]);
   const [search, setSearch] = useState('');
   const [mealTypeFilter, setMealTypeFilter] = useState('all');
+  const [weekAnchorDate, setWeekAnchorDate] = useState(() => new Date());
+  const [activeSection, setActiveSection] = useState('history');
+  const [historyPage, setHistoryPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingLog, setEditingLog] = useState(null);
   const [mealType, setMealType] = useState('breakfast');
@@ -104,6 +124,8 @@ const NutritionTracker = () => {
         await axios.post('http://localhost:5000/api/nutrition', payload, config);
         setMessage('Meal successfully logged.');
       }
+      setActiveSection('history');
+      setHistoryPage(1);
       setFoodName('');
       setQuantity('');
       setCalories('');
@@ -119,15 +141,22 @@ const NutritionTracker = () => {
     }
   };
 
-  const totalCalories = nutritionLogs.reduce(
+  const weekRange = getWeekRange(weekAnchorDate);
+  const weekStartKey = formatDateKey(weekRange.start);
+  const weekEndKey = formatDateKey(weekRange.end);
+  const weekLogs = nutritionLogs.filter((log) => {
+    const dateKey = formatDateKey(new Date(log.date));
+    return dateKey >= weekStartKey && dateKey <= weekEndKey;
+  });
+  const totalCalories = weekLogs.reduce(
     (total, log) => total + log.foodItems.reduce((mealTotal, item) => mealTotal + (Number(item.calories) || 0), 0),
     0,
   );
-  const totalProtein = nutritionLogs.reduce(
+  const totalProtein = weekLogs.reduce(
     (total, log) => total + log.foodItems.reduce((mealTotal, item) => mealTotal + (Number(item.protein) || 0), 0),
     0,
   );
-  const filteredNutritionLogs = nutritionLogs.filter((log) => {
+  const filteredNutritionLogs = weekLogs.filter((log) => {
     const query = search.trim().toLowerCase();
     const matchesSearch = !query || [
       log.mealType,
@@ -135,6 +164,14 @@ const NutritionTracker = () => {
     ].some((value) => value?.toLowerCase().includes(query));
     return matchesSearch && (mealTypeFilter === 'all' || log.mealType === mealTypeFilter);
   });
+  const historyPageCount = Math.ceil(filteredNutritionLogs.length / mealsPerPage);
+  const visibleNutritionLogs = filteredNutritionLogs.slice(
+    (historyPage - 1) * mealsPerPage,
+    historyPage * mealsPerPage,
+  );
+  const weekLabel = `${weekRange.start.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })} – ${weekRange.end.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}`;
+  const currentWeekStart = formatDateKey(getWeekRange(new Date()).start);
+  const isCurrentWeek = weekStartKey === currentWeekStart;
   const reportHeaders = ['Date', 'Meal', 'Food', 'Quantity', 'Calories (kcal)', 'Protein (g)', 'Carbs (g)', 'Fats (g)'];
   const reportRows = nutritionLogs.flatMap((log) => (
     (log.foodItems || []).map((item) => [
@@ -227,27 +264,65 @@ const NutritionTracker = () => {
         <div className="portal-summary-card">
           <span><Flame size={17} aria-hidden="true" /></span>
           <strong>{totalCalories.toLocaleString()}</strong>
-          <small>Calories logged</small>
+          <small>Calories this week</small>
         </div>
         <div className="portal-summary-card">
           <span><Salad size={17} aria-hidden="true" /></span>
-          <strong>{nutritionLogs.length}</strong>
-          <small>Meal entries</small>
+          <strong>{weekLogs.length}</strong>
+          <small>Meals this week</small>
         </div>
         <div className="portal-summary-card">
           <span><Apple size={17} aria-hidden="true" /></span>
           <strong>{Math.round(totalProtein)} g</strong>
-          <small>Protein logged</small>
+          <small>Protein this week</small>
         </div>
       </div>
 
-      <section className="portal-card">
+      <div className="nutrition-week-nav">
+        <div className="nutrition-week-nav-buttons">
+          <button
+            type="button"
+            className="workout-planner-icon-button"
+            onClick={() => {
+              setWeekAnchorDate((current) => new Date(current.getFullYear(), current.getMonth(), current.getDate() - 7));
+              setHistoryPage(1);
+            }}
+            aria-label="Previous week"
+          >
+            <ChevronLeft size={17} aria-hidden="true" />
+          </button>
+          <strong>{isCurrentWeek ? `This week · ${weekLabel}` : weekLabel}</strong>
+          <button
+            type="button"
+            className="workout-planner-icon-button"
+            onClick={() => {
+              setWeekAnchorDate((current) => new Date(current.getFullYear(), current.getMonth(), current.getDate() + 7));
+              setHistoryPage(1);
+            }}
+            aria-label="Next week"
+          >
+            <ChevronRight size={17} aria-hidden="true" />
+          </button>
+        </div>
+        {!isCurrentWeek && (
+          <button className="workout-planner-today" type="button" onClick={() => setWeekAnchorDate(new Date())}>This week</button>
+        )}
+      </div>
+
+      <div className="workout-section-switch" role="group" aria-label="Nutrition sections">
+        <button type="button" aria-pressed={activeSection === 'history'} onClick={() => setActiveSection('history')}>
+          Meal history <span>{weekLogs.length}</span>
+        </button>
+        <button type="button" aria-pressed={activeSection === 'analytics'} onClick={() => setActiveSection('analytics')}>Nutrition trends</button>
+      </div>
+
+      {activeSection === 'history' && <section className="portal-card">
         <div className="portal-card-heading">
           <div>
             <h2>Meal history</h2>
-            <p>Your recorded meals and their nutrition details.</p>
+            <p>Your meals recorded for this week.</p>
           </div>
-          <span className="portal-badge">{filteredNutritionLogs.length} of {nutritionLogs.length} entries</span>
+          <span className="portal-badge">{filteredNutritionLogs.length} of {weekLogs.length} entries</span>
         </div>
         <div className="portal-entry-filters">
           <label className="portal-entry-search">
@@ -255,7 +330,10 @@ const NutritionTracker = () => {
             <input
               type="search"
               value={search}
-              onChange={(event) => setSearch(event.target.value)}
+              onChange={(event) => {
+                setSearch(event.target.value);
+                setHistoryPage(1);
+              }}
               placeholder="Search meals or foods"
               aria-label="Search meals or foods"
             />
@@ -263,7 +341,10 @@ const NutritionTracker = () => {
           <select
             className="portal-entry-filter"
             value={mealTypeFilter}
-            onChange={(event) => setMealTypeFilter(event.target.value)}
+            onChange={(event) => {
+              setMealTypeFilter(event.target.value);
+              setHistoryPage(1);
+            }}
             aria-label="Filter meals by type"
           >
             <option value="all">All meal types</option>
@@ -276,8 +357,9 @@ const NutritionTracker = () => {
         {loading ? (
           <div className="portal-empty" role="status">Loading your meal history…</div>
         ) : filteredNutritionLogs.length ? (
-          <div className="portal-entry-list">
-            {filteredNutritionLogs.map((log) => {
+          <>
+            <div className="portal-entry-list">
+              {visibleNutritionLogs.map((log) => {
               const mealCalories = log.foodItems.reduce((total, item) => total + (Number(item.calories) || 0), 0);
               return (
                 <article className="portal-entry" key={log._id}>
@@ -303,15 +385,34 @@ const NutritionTracker = () => {
                   </div>
                 </article>
               );
-            })}
-          </div>
-        ) : nutritionLogs.length ? (
-          <div className="portal-empty">No meals match your search or selected meal type.</div>
+              })}
+            </div>
+            {historyPageCount > 1 && (
+              <div className="workout-history-pagination">
+                <span>
+                  Showing {(historyPage - 1) * mealsPerPage + 1}–{Math.min(historyPage * mealsPerPage, filteredNutritionLogs.length)} of {filteredNutritionLogs.length}
+                </span>
+                <div>
+                  <button className="portal-button portal-button-secondary" type="button" onClick={() => setHistoryPage((page) => page - 1)} disabled={historyPage === 1}>
+                    Previous
+                  </button>
+                  <span>Page {historyPage} of {historyPageCount}</span>
+                  <button className="portal-button portal-button-secondary" type="button" onClick={() => setHistoryPage((page) => page + 1)} disabled={historyPage === historyPageCount}>
+                    Next
+                  </button>
+                </div>
+              </div>
+            )}
+          </>
+        ) : weekLogs.length ? (
+          <div className="portal-empty">No meals match your search or selected meal type for this week.</div>
         ) : (
-          <div className="portal-empty">No meals logged yet. Add your first meal above to start your food journal.</div>
+          <div className="portal-empty">No meals logged for this week. Use the arrows above to view another week or add a meal.</div>
         )}
-      </section>
-      <NutritionAnalytics nutritionLogs={nutritionLogs} />
+      </section>}
+      {activeSection === 'analytics' && (
+        <NutritionAnalytics nutritionLogs={weekLogs} weekStartDate={weekStartKey} />
+      )}
     </div>
   );
 };

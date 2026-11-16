@@ -292,6 +292,10 @@
 
   .site-menu-toggle {
     display: inline-flex;
+    margin-left: 0;
+  }
+
+  .workout-notification-wrap.is-site {
     margin-left: auto;
   }
 

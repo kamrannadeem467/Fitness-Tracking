@@ -4,6 +4,7 @@ import {
   Activity,
   ChartNoAxesColumnIncreasing,
   Dumbbell,
+  House,
   LayoutDashboard,
   LogOut,
   Menu,
@@ -13,9 +14,11 @@ import {
   X,
 } from 'lucide-react';
 import { AuthContext } from '../../context/AuthContext';
+import WorkoutNotificationBell from './WorkoutNotificationBell';
 import './Portal.css';
 
 const navigation = [
+  { to: '/home', label: 'Website home', icon: House },
   { to: '/user/dashboard', label: 'Overview', icon: LayoutDashboard, end: true },
   { to: '/user/workouts', label: 'Workouts', icon: Dumbbell },
   { to: '/user/nutrition', label: 'Nutrition', icon: Salad },
@@ -121,6 +124,7 @@ const DashboardLayout = () => {
             <span>YOUR WELLNESS, YOUR WAY</span>
             <strong>Good to see you, {user?.name?.split(' ')[0] || 'friend'}</strong>
           </div>
+          <WorkoutNotificationBell />
           <NavLink className="portal-topbar-profile" to="/user/profile" aria-label="Open profile">
             <span className="portal-avatar">{user?.name?.charAt(0)?.toUpperCase() || 'U'}</span>
           </NavLink>
