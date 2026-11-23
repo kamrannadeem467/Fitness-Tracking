@@ -1,0 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --app-bg: #1b1d21;
+  --app-surface: #25282d;
+  --app-surface-raised: #2d3137;
+  --app-surface-soft: #202328;
+  --app-border: #3a3f46;
+  --app-text: #f2f3f5;
+  --app-muted: #b6bbc3;
+  --app-accent: #d94151;
+  --app-accent-hover: #ed5967;
+  --app-accent-soft: rgba(217, 65, 81, 0.15);
+  --app-accent-border: rgba(217, 65, 81, 0.42);
+  color: var(--app-text);
+  background: var(--app-bg);
+  font-family: 'DM Sans', sans-serif;
+  color-scheme: dark;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  min-width: 320px;
+  background: var(--app-bg);
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  background: var(--app-bg);
+  color: var(--app-text);
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+::selection {
+  background: var(--app-accent);
+  color: #ffffff;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--app-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  border: 2px solid var(--app-bg);
+  border-radius: 999px;
+  background: #555b64;
+}

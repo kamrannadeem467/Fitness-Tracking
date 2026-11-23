@@ -146,7 +146,12 @@ const UserRegister = () => {
           <div className="portal-auth-divider">or sign up with</div>
           <div className="portal-auth-google">
             <GoogleLogin
+              theme="outline"
+              size="large"
+              shape="pill"
               text="signup_with"
+              width={360}
+              logo_alignment="center"
               onSuccess={handleGoogleSuccess}
               onError={() => setError('Google sign-up failed. Please try again.')}
             />

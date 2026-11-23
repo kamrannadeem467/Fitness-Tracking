@@ -1,16 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
 
 .home-page {
-  --home-ink: #17231f;
-  --home-muted: #65736d;
-  --home-green: #1b7a56;
-  --home-lime: #c9f36a;
-  --home-border: #e7ece8;
+  --home-ink: var(--app-text);
+  --home-muted: var(--app-muted);
+  --home-green: var(--app-accent);
+  --home-lime: var(--app-accent);
+  --home-border: var(--app-border);
   margin: -20px;
   color: var(--home-ink);
-  background: #fff;
+  background: var(--app-bg);
   font-family: 'DM Sans', sans-serif;
-  overflow: hidden;
+  overflow-x: clip;
 }
 
 .home-page *,
@@ -52,8 +52,8 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #8bc34a;
-  box-shadow: 0 0 0 4px rgba(139, 195, 74, 0.15);
+  background: var(--app-accent);
+  box-shadow: 0 0 0 4px var(--app-accent-soft);
 }
 
 .home-button {
@@ -78,19 +78,19 @@
 
 .home-button:focus-visible,
 .home-feature-card:focus-visible {
-  outline: 3px solid #9edb55;
+  outline: 3px solid var(--app-accent-hover);
   outline-offset: 4px;
 }
 
 .home-button-primary {
-  color: #fff;
+  color: #121212;
   background: var(--home-green);
-  box-shadow: 0 8px 18px rgba(27, 122, 86, 0.18);
+  box-shadow: 0 8px 18px rgba(217, 65, 81, 0.14);
 }
 
 .home-button-primary:hover {
-  background: #145f42;
-  box-shadow: 0 12px 24px rgba(27, 122, 86, 0.23);
+  background: var(--app-accent-hover);
+  box-shadow: 0 12px 24px rgba(217, 65, 81, 0.2);
 }
 
 .home-button-outline {
@@ -100,30 +100,54 @@
 }
 
 .home-button-outline:hover {
-  background: #fff;
+  background: var(--app-surface-raised);
 }
 
 .home-hero {
   position: relative;
+  isolation: isolate;
+  overflow: hidden;
   padding: clamp(64px, 9vw, 112px) 0 82px;
+  background: var(--app-bg) url('/images/gym-panorama.jpg') center / cover no-repeat;
+}
+
+.home-hero-video {
+  position: absolute;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  inset: 0;
+  object-fit: cover;
+  object-position: center;
+  pointer-events: none;
+}
+
+.home-hero::after {
+  position: absolute;
+  z-index: 0;
   background:
-    radial-gradient(ellipse at 82% 45%, rgba(201, 243, 106, 0.22), transparent 34%),
-    linear-gradient(115deg, #f3f8f2 0%, #fbfcf8 58%, #f1f7e9 100%);
+    linear-gradient(90deg, rgba(13, 14, 17, 0.76), rgba(13, 14, 17, 0.52) 52%, rgba(13, 14, 17, 0.4)),
+    linear-gradient(0deg, rgba(13, 14, 17, 0.58), rgba(13, 14, 17, 0.12));
+  content: '';
+  inset: 0;
+  pointer-events: none;
 }
 
 .home-hero::before {
   position: absolute;
+  z-index: 1;
   top: 28px;
   right: -85px;
   width: 300px;
   height: 300px;
-  border: 1px solid rgba(27, 122, 86, 0.08);
+  border: 1px solid rgba(217, 65, 81, 0.16);
   border-radius: 50%;
   content: '';
 }
 
 .home-hero-grid {
   position: relative;
+  z-index: 2;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(320px, 0.88fr);
   align-items: center;
@@ -179,16 +203,17 @@
 
 .home-orbit {
   position: absolute;
+  z-index: 1;
   width: min(100%, 360px);
   aspect-ratio: 1;
-  border: 1px solid rgba(27, 122, 86, 0.13);
+  border: 1px solid rgba(217, 65, 81, 0.16);
   border-radius: 50%;
 }
 
 .home-orbit::before,
 .home-orbit::after {
   position: absolute;
-  border: 1px solid rgba(27, 122, 86, 0.11);
+  border: 1px solid rgba(217, 65, 81, 0.12);
   border-radius: 50%;
   content: '';
   inset: 24px;
@@ -198,10 +223,32 @@
   inset: 50px;
 }
 
+.home-workout-dragger {
+  position: relative;
+  z-index: 2;
+  width: min(100%, 330px);
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  transition: transform 420ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform;
+}
+
+.home-workout-dragger.is-dragging {
+  z-index: 3;
+  cursor: grabbing;
+  transition: none;
+}
+
+.home-workout-dragger:focus-visible {
+  border-radius: 18px;
+  outline: 2px solid #ff5963;
+  outline-offset: 6px;
+}
+
 .home-workout-card {
   position: relative;
-  z-index: 1;
-  width: min(100%, 330px);
+  width: 100%;
   padding: 24px;
   border: 1px solid rgba(255, 255, 255, 0.8);
   border-radius: 18px;
@@ -290,7 +337,7 @@
   width: 72%;
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, #4aab76, #b5df66);
+  background: linear-gradient(90deg, #a92c3b, #ed5967);
 }
 
 .home-workout-footer {
@@ -303,12 +350,12 @@
 
 .home-floating-badge {
   position: absolute;
-  z-index: 2;
+  z-index: 3;
   display: flex;
   align-items: center;
   gap: 9px;
   padding: 12px 14px;
-  border: 1px solid #edf1ec;
+  border: 1px solid var(--app-border);
   border-radius: 12px;
   background: #fff;
   box-shadow: 0 14px 35px rgba(31, 65, 47, 0.1);
@@ -318,7 +365,7 @@
 }
 
 .home-floating-badge svg {
-  color: #75a943;
+  color: var(--app-accent-hover);
 }
 
 .home-floating-badge-one {
@@ -333,6 +380,116 @@
 
 .home-features {
   padding: 88px 0 96px;
+}
+
+.home-about {
+  padding: clamp(68px, 8vw, 100px) 0;
+  border-bottom: 1px solid var(--app-border);
+  background: var(--app-bg);
+}
+
+.home-about-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 0.82fr);
+  align-items: center;
+  gap: clamp(40px, 8vw, 105px);
+}
+
+.home-about-copy h2 {
+  max-width: 520px;
+  margin: 15px 0;
+  font-size: clamp(31px, 4vw, 46px);
+  letter-spacing: -0.06em;
+  line-height: 1.14;
+}
+
+.home-about-copy h2 span {
+  color: var(--app-accent-hover);
+}
+
+.home-about-copy p {
+  max-width: 520px;
+  margin: 0 0 14px;
+  color: var(--home-muted);
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.home-about-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  color: var(--app-accent-hover);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.home-about-link svg {
+  transition: transform 180ms ease;
+}
+
+.home-about-link:hover svg {
+  transform: translateX(4px);
+}
+
+.home-about-list {
+  position: relative;
+  display: grid;
+  gap: 12px;
+  overflow: hidden;
+  padding: 24px;
+  border: 1px solid var(--app-border);
+  border-radius: 16px;
+  background: linear-gradient(145deg, var(--app-surface), var(--app-surface-soft));
+}
+
+.home-about-item {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 13px;
+  border: 1px solid var(--app-border);
+  border-radius: 11px;
+  background: rgba(27, 29, 33, 0.76);
+}
+
+.home-about-icon {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  place-items: center;
+  border-radius: 10px;
+  background: var(--app-accent-soft);
+  color: var(--app-accent-hover);
+}
+
+.home-about-item > span:last-child {
+  display: grid;
+  gap: 4px;
+}
+
+.home-about-item strong {
+  color: var(--app-text);
+  font-size: 13px;
+}
+
+.home-about-item small {
+  color: var(--app-muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.home-about-watermark {
+  position: absolute;
+  right: -14px;
+  bottom: -19px;
+  color: rgba(217, 65, 81, 0.08);
+  transform: rotate(-15deg);
 }
 
 .home-section-heading {
@@ -394,13 +551,13 @@
 }
 
 .home-feature-card:nth-child(2) .home-feature-icon {
-  color: #a76b22;
-  background: #fbf2e3;
+  color: var(--app-accent-hover);
+  background: var(--app-accent-soft);
 }
 
 .home-feature-card:nth-child(3) .home-feature-icon {
-  color: #596bb6;
-  background: #eff0fb;
+  color: var(--app-accent-hover);
+  background: var(--app-accent-soft);
 }
 
 .home-feature-card h3 {
@@ -477,6 +634,43 @@
   background: #fff;
 }
 
+.home-image-banner {
+  display: flex;
+  min-height: 340px;
+  align-items: center;
+  padding: 65px 0;
+  background:
+    linear-gradient(90deg, rgba(15, 16, 19, 0.88), rgba(15, 16, 19, 0.54) 58%, rgba(15, 16, 19, 0.36)),
+    url('/images/gym-panorama.jpg') center 48% / cover no-repeat fixed;
+}
+
+.home-image-banner-content {
+  max-width: 610px;
+}
+
+.home-image-banner-kicker {
+  color: #ff8490;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+.home-image-banner h2 {
+  margin: 13px 0 10px;
+  color: #fff;
+  font-size: clamp(32px, 4.5vw, 52px);
+  letter-spacing: -0.06em;
+  line-height: 1.12;
+}
+
+.home-image-banner p {
+  max-width: 490px;
+  margin: 0 0 22px;
+  color: #e0e1e4;
+  font-size: 14px;
+  line-height: 1.75;
+}
+
 .home-cta-panel {
   position: relative;
   display: flex;
@@ -487,8 +681,8 @@
   padding: clamp(28px, 5vw, 54px);
   border-radius: 16px;
   background:
-    radial-gradient(circle at 95% 0%, rgba(201, 243, 106, 0.24), transparent 30%),
-    #173d2e;
+    radial-gradient(circle at 95% 0%, rgba(217, 65, 81, 0.15), transparent 32%),
+    var(--app-surface-soft);
   color: #fff;
 }
 
@@ -512,7 +706,7 @@
 .home-cta-copy p {
   max-width: 520px;
   margin: 0;
-  color: #c4d5ca;
+  color: var(--app-muted);
   font-size: 14px;
   line-height: 1.75;
 }
@@ -521,12 +715,12 @@
   position: relative;
   z-index: 1;
   flex: 0 0 auto;
-  color: #193528;
+  color: #ffffff;
   background: var(--home-lime);
 }
 
 .home-cta .home-button:hover {
-  background: #d8fa8a;
+  background: var(--app-accent-hover);
 }
 
 @keyframes home-float {
@@ -534,7 +728,156 @@
   50% { transform: translateY(-9px); }
 }
 
+/* Dark gym theme */
+.home-button-primary,
+.home-cta .home-button {
+  background: var(--app-accent);
+  color: #ffffff;
+  box-shadow: 0 10px 26px rgba(217, 65, 81, 0.2);
+}
+
+.home-button-primary:hover,
+.home-cta .home-button:hover {
+  background: var(--app-accent-hover);
+  color: #ffffff;
+}
+
+.home-button-outline {
+  border-color: var(--app-border);
+  background: rgba(37, 40, 45, 0.86);
+  color: var(--app-text);
+}
+
+.home-workout-card,
+.home-floating-badge,
+.home-feature-card,
+.home-cta,
+.home-cta-panel {
+  border-color: var(--app-border);
+  background: var(--app-surface);
+  color: var(--app-text);
+}
+
+.home-workout-card {
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.38);
+}
+
+.home-workout-dragger.is-dragging .home-workout-card {
+  transform: scale(1.035);
+  box-shadow: 0 32px 85px rgba(0, 0, 0, 0.55), 0 0 28px rgba(217, 65, 81, 0.18);
+  animation: none;
+}
+
+.home-workout-card-top,
+.home-workout-title p,
+.home-workout-footer,
+.home-section-heading p,
+.home-feature-card p,
+.home-stat span,
+.home-hero-copy > p,
+.home-hero-note {
+  color: #a7b1aa;
+}
+
+.home-workout-pill,
+.home-workout-icon,
+.home-feature-icon {
+  background: var(--app-accent-soft);
+  color: var(--app-accent-hover);
+}
+
+.home-progress-track {
+  background: var(--app-surface-raised);
+}
+
+.home-progress-track span {
+  background: linear-gradient(90deg, #9f1f29, #ff5963);
+}
+
+.home-features,
+.home-cta {
+  background: var(--app-bg);
+}
+
+.home-cta {
+  background: var(--app-bg);
+}
+
+.home-stats {
+  border-top: 1px solid var(--app-border);
+  border-bottom: 1px solid var(--app-border);
+  background: var(--app-surface-soft);
+}
+
+.home-stat + .home-stat {
+  border-left-color: var(--app-border);
+}
+
+.home-cta-panel {
+  background:
+    radial-gradient(circle at 95% 0%, rgba(217, 65, 81, 0.15), transparent 32%),
+    var(--app-surface-soft);
+}
+
+.home-feature-card:hover {
+  border-color: var(--app-accent-border);
+  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.24);
+}
+
+.home-feature-card .home-feature-icon {
+  background: var(--app-accent-soft);
+  color: var(--app-accent-hover);
+}
+
+.home-hero-copy {
+  animation: home-enter 700ms ease-out both;
+}
+
+.home-hero-art {
+  animation: home-enter-right 800ms 120ms ease-out both;
+}
+
+.home-feature-card {
+  animation: home-enter 600ms ease-out both;
+}
+
+.home-feature-card:nth-child(2) {
+  animation-delay: 100ms;
+}
+
+.home-feature-card:nth-child(3) {
+  animation-delay: 200ms;
+}
+
+.home-orbit {
+  border-color: rgba(217, 65, 81, 0.18);
+}
+
+.home-orbit::before,
+.home-orbit::after {
+  border-color: rgba(217, 65, 81, 0.13);
+  animation: home-pulse 4s ease-in-out infinite;
+}
+
+@keyframes home-enter {
+  from { opacity: 0; transform: translateY(22px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes home-enter-right {
+  from { opacity: 0; transform: translateX(28px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes home-pulse {
+  50% { opacity: 0.35; transform: scale(1.04); }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .home-hero-video {
+    display: none;
+  }
+
   .home-page *,
   .home-page *::before,
   .home-page *::after {
@@ -577,6 +920,11 @@
     margin: 0 auto;
   }
 
+  .home-about-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
   .home-feature-card {
     min-height: 0;
   }
@@ -616,6 +964,10 @@
     padding: 20px;
   }
 
+  .home-workout-dragger {
+    width: min(100% - 24px, 320px);
+  }
+
   .home-floating-badge-one {
     top: 14px;
     right: -2px;
@@ -627,8 +979,16 @@
   }
 
   .home-features,
+  .home-about,
   .home-cta {
     padding: 62px 0;
+  }
+
+  .home-image-banner {
+    min-height: 310px;
+    padding: 52px 0;
+    background-attachment: scroll;
+    background-position: 58% center;
   }
 
   .home-stats {

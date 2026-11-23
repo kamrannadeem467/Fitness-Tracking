@@ -3,7 +3,7 @@
 .portal-shell {
   --portal-ink: #17231f;
   --portal-muted: #65736d;
-  --portal-green: #1b7a56;
+  --portal-green: var(--app-accent);
   --portal-border: #e6ece7;
   display: flex;
   min-height: 100vh;
@@ -62,7 +62,7 @@
 }
 
 .portal-brand > span:last-child > span {
-  color: #78ae48;
+  color: var(--app-accent);
 }
 
 .portal-brand-mark {
@@ -71,7 +71,7 @@
   height: 34px;
   place-items: center;
   border-radius: 10px;
-  background: #edf6e9;
+  background: var(--app-accent-soft);
   color: var(--portal-green);
 }
 
@@ -116,7 +116,7 @@
 }
 
 .portal-nav-link.is-active {
-  background: #edf6e9;
+  background: var(--app-accent-soft);
   color: var(--portal-green);
 }
 
@@ -125,7 +125,7 @@
   height: 19px;
   margin-left: -11px;
   border-radius: 0 4px 4px 0;
-  background: #78ae48;
+  background: var(--app-accent);
   content: '';
 }
 
@@ -170,7 +170,7 @@
   flex: 0 0 36px;
   place-items: center;
   border-radius: 50%;
-  background: #eaf3e7;
+  background: var(--app-accent-soft);
   color: var(--portal-green);
   font-size: 13px;
   font-weight: 700;
@@ -484,8 +484,6 @@
   border: 1px solid #dfe7df;
   border-radius: 7px;
   outline: none;
-  background: #fff;
-  color: #25372d;
   font: inherit;
   font-size: 12px;
   transition: border-color 160ms ease, box-shadow 160ms ease;
@@ -504,8 +502,8 @@
 .portal-field input:focus,
 .portal-field select:focus,
 .portal-field textarea:focus {
-  border-color: #83b77b;
-  box-shadow: 0 0 0 3px rgba(131, 183, 123, 0.15);
+  border-color: var(--app-accent);
+  box-shadow: 0 0 0 3px var(--app-accent-soft);
 }
 
 .portal-form-grid-three > input {
@@ -522,8 +520,8 @@
 }
 
 .portal-form-grid-three > input:focus {
-  border-color: #83b77b;
-  box-shadow: 0 0 0 3px rgba(131, 183, 123, 0.15);
+  border-color: var(--app-accent);
+  box-shadow: 0 0 0 3px var(--app-accent-soft);
 }
 
 .portal-form-actions {
@@ -553,7 +551,7 @@
 
 .portal-button:hover {
   transform: translateY(-1px);
-  background: #145f42;
+  background: var(--app-accent-hover);
 }
 
 .portal-button:disabled {
@@ -670,8 +668,6 @@
   border: 1px solid #dfe7df;
   border-radius: 7px;
   outline: none;
-  background: #fff;
-  color: #25372d;
   font: inherit;
   font-size: 12px;
   transition: border-color 160ms ease, box-shadow 160ms ease;
@@ -683,8 +679,8 @@
 
 .portal-entry-search input:focus,
 .portal-entry-filter:focus {
-  border-color: #83b77b;
-  box-shadow: 0 0 0 3px rgba(131, 183, 123, 0.15);
+  border-color: var(--app-accent);
+  box-shadow: 0 0 0 3px var(--app-accent-soft);
 }
 
 .portal-entry-filter {
@@ -716,7 +712,7 @@
   align-items: center;
   padding: 0 8px;
   border-radius: 20px;
-  background: #edf6e9;
+  background: var(--app-accent-soft);
   color: #39704e;
   font-size: 9px;
   font-weight: 700;
@@ -846,7 +842,7 @@
 }
 
 .workout-section-switch button[aria-pressed='true'] {
-  background: #edf6e9;
+  background: var(--app-accent-soft);
   color: var(--portal-green);
 }
 
@@ -857,7 +853,7 @@
   place-items: center;
   padding: 0 5px;
   border-radius: 10px;
-  background: rgba(27, 122, 86, 0.1);
+  background: rgba(217, 65, 81, 0.12);
   font-size: 9px;
 }
 
@@ -967,8 +963,6 @@
   place-items: center;
   border: 1px solid #e6ece7;
   border-radius: 7px;
-  background: #fff;
-  color: #68766d;
   cursor: pointer;
 }
 
@@ -1144,7 +1138,7 @@
   place-items: center;
   margin-bottom: 14px;
   border-radius: 9px;
-  background: #edf6e9;
+  background: var(--app-accent-soft);
   color: var(--portal-green);
 }
 
@@ -1218,7 +1212,7 @@
   height: 34px;
   place-items: center;
   border-radius: 8px;
-  background: #edf6e9;
+  background: var(--app-accent-soft);
   color: var(--portal-green);
 }
 
@@ -1257,7 +1251,7 @@
   flex: 0 0 38px;
   place-items: center;
   border-radius: 10px;
-  background: #edf6e9;
+  background: var(--app-accent-soft);
   color: var(--portal-green);
 }
 
@@ -1296,10 +1290,10 @@
   width: 76px;
   height: 76px;
   flex: 0 0 76px;
-  border: 3px solid #edf6e9;
+  border: 3px solid var(--app-accent-soft);
   border-radius: 50%;
   object-fit: cover;
-  background: #edf6e9;
+  background: var(--app-accent-soft);
 }
 
 .portal-avatar-editor {
@@ -1337,7 +1331,7 @@
 }
 
 .portal-visually-hidden:focus-visible + .portal-file-label {
-  outline: 3px solid #9edb55;
+  outline: 3px solid var(--app-accent-hover);
   outline-offset: 3px;
 }
 
@@ -1410,8 +1404,8 @@
   place-items: center;
   padding: 28px 18px;
   background:
-    radial-gradient(ellipse at 15% 10%, rgba(201, 243, 106, 0.18), transparent 35%),
-    #f5f8f4;
+    radial-gradient(ellipse at 15% 10%, rgba(217, 65, 81, 0.14), transparent 35%),
+    var(--app-bg);
   color: var(--portal-ink);
   font-family: 'DM Sans', sans-serif;
 }
@@ -1434,8 +1428,8 @@
   justify-content: space-between;
   padding: 34px;
   background:
-    radial-gradient(circle at 100% 10%, rgba(201, 243, 106, 0.18), transparent 32%),
-    #173d2e;
+    radial-gradient(circle at 100% 10%, rgba(217, 65, 81, 0.16), transparent 32%),
+    var(--app-surface-soft);
   color: #fff;
 }
 
@@ -1444,8 +1438,8 @@
 }
 
 .portal-auth-aside .portal-brand-mark {
-  background: rgba(201, 243, 106, 0.15);
-  color: #c9f36a;
+  background: var(--app-accent-soft);
+  color: var(--app-accent-hover);
 }
 
 .portal-auth-aside-copy h1 {
@@ -1674,8 +1668,238 @@
 
 .portal-shell :focus-visible,
 .portal-auth-page :focus-visible {
-  outline: 3px solid #9edb55;
+  outline: 3px solid var(--app-accent-hover);
   outline-offset: 3px;
+}
+
+.portal-shell {
+  --portal-ink: var(--app-text);
+  --portal-muted: var(--app-muted);
+  --portal-green: var(--app-accent);
+  --portal-border: var(--app-border);
+  background: var(--app-bg);
+  color: var(--portal-ink);
+}
+
+.portal-sidebar,
+.portal-topbar,
+.portal-auth-aside,
+.portal-auth-content,
+.portal-card,
+.portal-section,
+.portal-chart-card,
+.portal-stat-card,
+.portal-entry,
+.portal-summary-card,
+.portal-form,
+.portal-filter-bar,
+.portal-empty,
+.portal-empty-state,
+.portal-auth-layout,
+.portal-verification-note,
+.portal-auth-complete,
+.portal-auth-otp,
+.portal-modal,
+.workout-section-switch,
+.nutrition-week-nav,
+.workout-planner-views,
+.workout-plan-form {
+  border-color: var(--app-border);
+  background: var(--app-surface);
+  color: var(--app-text);
+}
+
+.portal-topbar {
+  background: rgba(37, 40, 45, 0.94);
+}
+
+.portal-brand,
+.portal-brand > span:last-child > span,
+.portal-sidebar-user-copy strong,
+.portal-topbar-copy strong,
+.portal-page-heading h1,
+.portal-card-heading h2,
+.portal-card-heading h3,
+.portal-auth-content h2,
+.portal-auth-back,
+.portal-auth-links a {
+  color: var(--app-text);
+}
+
+.portal-brand-mark,
+.portal-avatar,
+.portal-auth-aside .portal-brand-mark {
+  background: var(--app-accent-soft);
+  color: var(--app-accent-hover);
+}
+
+.portal-sidebar-label,
+.portal-nav-link,
+.portal-sidebar-user-copy small,
+.portal-topbar-copy span,
+.portal-page-heading p,
+.portal-card-heading p,
+.portal-auth-subtitle,
+.portal-auth-aside-copy p,
+.portal-auth-aside-foot,
+.portal-footer {
+  color: var(--app-muted);
+}
+
+.portal-nav-link:hover,
+.portal-nav-link.is-active,
+.portal-menu-button,
+.portal-topbar-profile,
+.portal-tab.is-active {
+  background: var(--app-accent-soft);
+  color: var(--app-accent-hover);
+}
+
+.portal-nav-link.is-active::before {
+  background: var(--app-accent);
+}
+
+.portal-sidebar-user,
+.portal-footer,
+.portal-card-heading,
+.portal-auth-divider::before,
+.portal-auth-divider::after,
+.portal-auth-links,
+.portal-auth-options {
+  border-color: var(--app-border);
+}
+
+.portal-button,
+.portal-form-button-primary,
+.portal-auth-submit {
+  background: var(--app-accent);
+  color: #ffffff;
+  border: 0;
+}
+
+.portal-button:hover,
+.portal-form-button-primary:hover,
+.portal-auth-submit:hover {
+  background: var(--app-accent-hover);
+}
+
+.portal-button-secondary {
+  border-color: var(--app-border);
+  background: var(--app-surface-raised);
+  color: var(--app-text);
+}
+
+.portal-button-secondary:hover {
+  background: var(--app-accent-soft);
+  color: var(--app-accent-hover);
+}
+
+.portal-badge {
+  background: var(--app-accent-soft);
+  color: var(--app-accent-hover);
+}
+
+.portal-empty {
+  border-color: var(--app-border);
+  color: var(--app-muted);
+}
+
+.portal-modal,
+.workout-section-switch,
+.nutrition-week-nav,
+.workout-planner-views,
+.workout-plan-form {
+  border-color: var(--app-border);
+  background: var(--app-surface);
+  color: var(--app-text);
+}
+
+.workout-section-switch button,
+.workout-planner-views button {
+  color: var(--app-muted);
+}
+
+.workout-section-switch button[aria-pressed='true'],
+.workout-planner-views button.is-active {
+  background: var(--app-accent-soft);
+  color: var(--app-accent-hover);
+}
+
+.portal-quick-link,
+.workout-plan-item {
+  border-color: var(--app-border);
+  color: var(--app-text);
+}
+
+.portal-quick-link:hover {
+  border-color: var(--app-accent-border);
+  background: var(--app-accent-soft);
+}
+
+.portal-shell h1,
+.portal-shell h2,
+.portal-shell h3,
+.portal-shell .portal-field label,
+.portal-shell .portal-summary-card strong,
+.portal-shell .portal-profile-detail strong,
+.portal-shell .portal-entry-detail,
+.portal-shell .portal-quick-link-copy strong,
+.portal-shell .workout-planner-period-nav strong {
+  color: var(--app-text);
+}
+
+.portal-shell .portal-summary-card small,
+.portal-shell .portal-entry-meta,
+.portal-shell .portal-quick-link-copy small,
+.portal-shell .portal-field-hint {
+  color: var(--app-muted);
+}
+
+.portal-entry:hover {
+  border-color: var(--app-accent-border);
+}
+
+.portal-alert-success {
+  border-color: var(--app-border);
+  background: var(--app-surface-raised);
+  color: var(--app-text);
+}
+
+.portal-brand > span:last-child > span {
+  color: var(--app-accent-hover);
+}
+
+.portal-auth-page {
+  min-height: 100vh;
+  background: var(--app-bg);
+  color: var(--app-text);
+}
+
+.portal-auth-aside {
+  background:
+    radial-gradient(circle at 20% 20%, rgba(217, 65, 81, 0.14), transparent 30%),
+    var(--app-surface-soft);
+}
+
+.portal-auth-form input,
+.portal-auth-google,
+.portal-form input,
+.portal-form textarea,
+.portal-form select,
+.portal-filter-bar input,
+.portal-filter-bar select,
+.portal-auth-back-button,
+.portal-auth-options a {
+  border-color: var(--app-border);
+  background: var(--app-surface-raised);
+  color: var(--app-text);
+  color-scheme: dark;
+}
+
+.portal-auth-form input::placeholder,
+.portal-form input::placeholder,
+.portal-form textarea::placeholder {
+  color: #969ca5;
 }
 
 @media (max-width: 920px) {
@@ -1724,7 +1948,7 @@
     z-index: 19;
     display: block;
     border: 0;
-    background: rgba(19, 34, 25, 0.36);
+    background: rgba(12, 14, 17, 0.62);
     inset: 0;
   }
 

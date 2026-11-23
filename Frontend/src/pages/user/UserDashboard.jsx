@@ -83,7 +83,7 @@ const UserDashboard = () => {
               <h2>Small steps, steady progress</h2>
               <p>Choose one thing to focus on today.</p>
             </div>
-            <Activity size={19} color="#1b7a56" aria-hidden="true" />
+            <Activity size={19} color="var(--app-accent)" aria-hidden="true" />
           </div>
           <div className="portal-quick-links">
             {quickLinks.map(({ to, label, description, icon: Icon }) => (

@@ -79,6 +79,7 @@ const AdminMessages = () => {
               onChange={(event) => setSearch(event.target.value)}
               placeholder="Search messages"
               aria-label="Search contact messages"
+              
             />
           </label>
         </div>

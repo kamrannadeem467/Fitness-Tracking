@@ -60,11 +60,15 @@ const NutritionAnalytics = ({ nutritionLogs, weekStartDate }) => {
         <div className="nutrition-chart">
           <ResponsiveContainer>
             <BarChart data={chartData} margin={{ top: 5, right: 12, bottom: 5, left: -12 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#edf1ed" />
-              <XAxis dataKey="name" stroke="#7c8981" fontSize={10} interval={0} />
-              <YAxis stroke="#7c8981" fontSize={10} />
-              <Tooltip />
-              <Bar dataKey="Calories" fill="#1b7a56" radius={[4, 4, 0, 0]} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#3a3f46" />
+              <XAxis dataKey="name" stroke="#aab0b8" fontSize={10} interval={0} />
+              <YAxis stroke="#aab0b8" fontSize={10} />
+              <Tooltip
+                contentStyle={{ backgroundColor: '#2d3137', borderColor: '#3a3f46', color: '#f2f3f5' }}
+                labelStyle={{ color: '#f2f3f5' }}
+                itemStyle={{ color: '#f2f3f5' }}
+              />
+              <Bar dataKey="Calories" fill="#d94151" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -80,14 +84,18 @@ const NutritionAnalytics = ({ nutritionLogs, weekStartDate }) => {
         <div className="nutrition-chart">
           <ResponsiveContainer>
             <BarChart data={chartData} margin={{ top: 5, right: 12, bottom: 5, left: -12 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#edf1ed" />
-              <XAxis dataKey="name" stroke="#7c8981" fontSize={10} interval={0} />
-              <YAxis stroke="#7c8981" fontSize={10} />
-              <Tooltip />
+              <CartesianGrid strokeDasharray="3 3" stroke="#3a3f46" />
+              <XAxis dataKey="name" stroke="#aab0b8" fontSize={10} interval={0} />
+              <YAxis stroke="#aab0b8" fontSize={10} />
+              <Tooltip
+                contentStyle={{ backgroundColor: '#2d3137', borderColor: '#3a3f46', color: '#f2f3f5' }}
+                labelStyle={{ color: '#f2f3f5' }}
+                itemStyle={{ color: '#f2f3f5' }}
+              />
               <Legend />
-              <Bar dataKey="Protein" fill="#1b7a56" radius={[3, 3, 0, 0]} />
-              <Bar dataKey="Carbs" fill="#78ae48" radius={[3, 3, 0, 0]} />
-              <Bar dataKey="Fats" fill="#e6a23c" radius={[3, 3, 0, 0]} />
+              <Bar dataKey="Protein" fill="#d94151" radius={[3, 3, 0, 0]} />
+              <Bar dataKey="Carbs" fill="#ed7d88" radius={[3, 3, 0, 0]} />
+              <Bar dataKey="Fats" fill="#f2a65a" radius={[3, 3, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>

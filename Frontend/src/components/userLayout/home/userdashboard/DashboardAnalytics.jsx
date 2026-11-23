@@ -71,11 +71,15 @@ const DashboardAnalytics = ({
           <div className="dashboard-chart">
             <ResponsiveContainer>
               <BarChart data={dailyActivity} margin={{ top: 5, right: 12, bottom: 5, left: -12 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#edf1ed" />
-                <XAxis dataKey="day" stroke="#7c8981" fontSize={10} />
-                <YAxis allowDecimals={false} stroke="#7c8981" fontSize={10} />
-                <Tooltip />
-                <Bar dataKey="workouts" name="Workouts" fill="#1b7a56" radius={[4, 4, 0, 0]} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#3a3f46" />
+                <XAxis dataKey="day" stroke="#aab0b8" fontSize={10} />
+                <YAxis allowDecimals={false} stroke="#aab0b8" fontSize={10} />
+                <Tooltip
+                  contentStyle={{ backgroundColor: '#2d3137', borderColor: '#3a3f46', color: '#f2f3f5' }}
+                  labelStyle={{ color: '#f2f3f5' }}
+                  itemStyle={{ color: '#f2f3f5' }}
+                />
+                <Bar dataKey="workouts" name="Workouts" fill="#d94151" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -95,10 +99,14 @@ const DashboardAnalytics = ({
           <div className="dashboard-chart">
             <ResponsiveContainer>
               <BarChart data={dailyActivity} margin={{ top: 5, right: 12, bottom: 5, left: -12 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#edf1ed" />
-                <XAxis dataKey="day" stroke="#7c8981" fontSize={10} />
-                <YAxis stroke="#7c8981" fontSize={10} />
-                <Tooltip />
+                <CartesianGrid strokeDasharray="3 3" stroke="#3a3f46" />
+                <XAxis dataKey="day" stroke="#aab0b8" fontSize={10} />
+                <YAxis stroke="#aab0b8" fontSize={10} />
+                <Tooltip
+                  contentStyle={{ backgroundColor: '#2d3137', borderColor: '#3a3f46', color: '#f2f3f5' }}
+                  labelStyle={{ color: '#f2f3f5' }}
+                  itemStyle={{ color: '#f2f3f5' }}
+                />
                 <Bar dataKey="calories" name="Calories" fill="#e6a23c" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
@@ -119,15 +127,19 @@ const DashboardAnalytics = ({
           <div className="dashboard-chart">
             <ResponsiveContainer>
               <LineChart data={weightData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#edf1ed" />
-                <XAxis dataKey="date" stroke="#7c8981" fontSize={10} />
-                <YAxis stroke="#7c8981" fontSize={10} />
-                <Tooltip />
+                <CartesianGrid strokeDasharray="3 3" stroke="#3a3f46" />
+                <XAxis dataKey="date" stroke="#aab0b8" fontSize={10} />
+                <YAxis stroke="#aab0b8" fontSize={10} />
+                <Tooltip
+                  contentStyle={{ backgroundColor: '#2d3137', borderColor: '#3a3f46', color: '#f2f3f5' }}
+                  labelStyle={{ color: '#f2f3f5' }}
+                  itemStyle={{ color: '#f2f3f5' }}
+                />
                 <Line
                   type="monotone"
                   dataKey="weight"
                   name="Weight"
-                  stroke="#1b7a56"
+                  stroke="#d94151"
                   strokeWidth={2}
                   activeDot={{ r: 5 }}
                 />

@@ -81,6 +81,12 @@ const UserLogin = () => {
       <div className="portal-auth-divider">or continue with</div>
       <div className="portal-auth-google">
         <GoogleLogin
+          theme="outline"
+          size="large"
+          shape="pill"
+          text="signin_with"
+          logo_alignment="center"
+          width={360}
           onSuccess={handleGoogleSuccess}
           onError={() => setError('Google sign-in failed. Please try again.')}
         />

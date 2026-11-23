@@ -170,3 +170,66 @@
     right: -34px;
   }
 }
+
+.workout-notification-button {
+  border-color: var(--app-border);
+  background: var(--app-surface);
+  color: var(--app-muted);
+}
+
+.workout-notification-button:hover,
+.workout-notification-button[aria-expanded='true'] {
+  background: var(--app-accent-soft);
+  color: var(--app-accent-hover);
+}
+
+.workout-notification-count {
+  border-color: var(--app-surface);
+  background: var(--app-accent);
+}
+
+.workout-notification-panel {
+  border-color: var(--app-border);
+  background: var(--app-surface);
+  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.3);
+}
+
+.workout-notification-heading,
+.workout-notification-item {
+  border-color: var(--app-border);
+  color: var(--app-text);
+}
+
+.workout-notification-heading > span,
+.workout-notification-icon,
+.workout-notification-unread-dot {
+  color: var(--app-accent-hover);
+}
+
+.workout-notification-icon {
+  background: var(--app-accent-soft);
+}
+
+.workout-notification-item:hover,
+.workout-notification-item.is-unread {
+  background: var(--app-accent-soft);
+}
+
+.workout-notification-copy strong {
+  color: var(--app-text);
+}
+
+.workout-notification-copy small,
+.workout-notification-empty {
+  color: var(--app-muted);
+}
+
+.workout-notification-unread-dot {
+  background: var(--app-accent);
+}
+
+.workout-notification-error button {
+  border-color: var(--app-border);
+  background: var(--app-surface-raised);
+  color: var(--app-accent-hover);
+}

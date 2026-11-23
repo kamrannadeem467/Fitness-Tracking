@@ -31,7 +31,7 @@ export const printReport = (title, headers, rows) => {
     p { margin: 0 0 18px; color: #68766d; }
     table { width: 100%; border-collapse: collapse; }
     th, td { padding: 8px; border: 1px solid #dfe7df; text-align: left; vertical-align: top; }
-    th { background: #edf6e9; }
+    th { background: #d94151; color: #fff; }
     tr { break-inside: avoid; }
   `;
   reportDocument.head.appendChild(style);

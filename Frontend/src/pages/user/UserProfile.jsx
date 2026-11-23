@@ -65,7 +65,7 @@ const UserProfile = () => {
             <h2>Make it yours</h2>
             <p>Your profile is a simple place to keep your account details up to date.</p>
           </div>
-          <UserRound size={19} color="#1b7a56" aria-hidden="true" />
+          <UserRound size={19} color="var(--app-accent)" aria-hidden="true" />
         </div>
         <Link className="portal-quick-link" to="/user/profile/edit">
           <span><Pencil size={16} aria-hidden="true" /></span>
